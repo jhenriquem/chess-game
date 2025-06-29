@@ -1,16 +1,14 @@
 package core
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"sync"
 
 	"github.com/gorilla/websocket"
 )
-
-var addr = flag.String("addr", "localhost:8080", "http service address")
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool { return true },
@@ -22,9 +20,11 @@ var (
 )
 
 func Run() *string {
+	addr := fmt.Sprintf("localhost:%s", os.Getenv("PORT"))
+
 	http.HandleFunc("/game", handlerGame)
 
-	return addr
+	return &addr
 }
 
 func handlerGame(w http.ResponseWriter, r *http.Request) {

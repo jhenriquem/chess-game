@@ -5,13 +5,20 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load(".client.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// Conectar ao servidor WebSocket
-	url := "ws://localhost:8080/game"
+	url := fmt.Sprintf("ws://%s/game", os.Getenv("SERVER"))
 	fmt.Println("Conectando ao servidor:", url)
 
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
@@ -19,6 +26,12 @@ func main() {
 		log.Fatal("Erro ao conectar:", err)
 	}
 	defer conn.Close()
+
+	conn.SetReadDeadline(time.Now().Add(15 * time.Second))
+	conn.SetPongHandler(func(appData string) error {
+		conn.SetReadDeadline(time.Now().Add(15 * time.Second)) // renova deadline
+		return nil
+	})
 
 	// Canal para leitura de mensagens do servidor
 	go func() {
