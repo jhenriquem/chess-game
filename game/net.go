@@ -26,7 +26,6 @@ func (p *Player) MonitoringConnection() {
 
 	done := make(chan struct{})
 
-	// Inicia rotina para enviar pings periodicamente
 	go pingLoop(p.Client, done)
 
 	for {

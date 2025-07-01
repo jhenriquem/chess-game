@@ -1,4 +1,4 @@
-package core
+package server
 
 import (
 	"fmt"
@@ -42,7 +42,7 @@ func handlerGame(w http.ResponseWriter, r *http.Request) {
 func sendInfo(c *websocket.Conn, msg string) error {
 	err := c.WriteMessage(websocket.TextMessage, []byte(msg))
 	if err != nil {
-		return fmt.Errorf("Error sending message : ", err)
+		return fmt.Errorf("Error sending message : %v", err)
 	}
 	return nil
 }

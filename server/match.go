@@ -1,7 +1,7 @@
-package core
+package server
 
 import (
-	g "chess-game_cli/internal/game"
+	g "chess-game_server/game"
 	"fmt"
 
 	"github.com/gorilla/websocket"

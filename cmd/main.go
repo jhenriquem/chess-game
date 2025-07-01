@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chess-game_cli/internal/server/core"
+	"chess-game_server/server"
 	"fmt"
 	"log"
 	"net/http"
@@ -15,7 +15,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	addr := core.Run()
+	addr := server.Run()
 
 	fmt.Printf("Server online -> %s", *addr)
 	log.Fatal(http.ListenAndServe(*addr, nil))

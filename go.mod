@@ -1,4 +1,4 @@
-module chess-game_cli
+module chess-game_server
 
 go 1.24.1
 

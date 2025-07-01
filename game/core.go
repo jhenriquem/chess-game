@@ -4,13 +4,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func newPlayer(client *websocket.Conn, color string) *Player {
-	return &Player{
-		Client:      client,
-		ColorPieces: color,
-	}
-}
-
 func New(p1, p2 *websocket.Conn) *Game {
 	g := &Game{
 		BlackPlayer: newPlayer(p2, "black"),
