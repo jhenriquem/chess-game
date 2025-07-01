@@ -39,10 +39,6 @@ func handlerGame(w http.ResponseWriter, r *http.Request) {
 	go HandleConnection(c)
 }
 
-func sendInfo(c *websocket.Conn, msg string) error {
-	err := c.WriteMessage(websocket.TextMessage, []byte(msg))
-	if err != nil {
-		return fmt.Errorf("Error sending message : %v", err)
-	}
-	return nil
+func sendInfo(conn *websocket.Conn, msg string) {
+	conn.WriteJSON(map[string]string{"info": msg})
 }

@@ -14,30 +14,30 @@ func (g *Game) InitBoard() {
 	for col, piece := range majorPieces {
 		board[0][col] = &Pieces{
 			Location: columnToLetter(col) + "8",
-			Color:    g.BlackPlayer.ColorPieces,
+			Color:    g.GetBlack().Color,
 			Piece:    piece,
-			Player:   g.BlackPlayer,
+			Player:   g.GetBlack(),
 		}
 		board[1][col] = &Pieces{
 			Location: columnToLetter(col) + "7",
-			Color:    g.BlackPlayer.ColorPieces,
+			Color:    g.GetBlack().Color,
 			Piece:    "Pawn",
-			Player:   g.BlackPlayer,
+			Player:   g.GetBlack(),
 		}
 	}
 
 	for col, piece := range majorPieces {
 		board[7][col] = &Pieces{
 			Location: columnToLetter(col) + "1",
-			Color:    g.WhitePlayer.ColorPieces,
+			Color:    g.GetWhite().Color,
 			Piece:    piece,
-			Player:   g.WhitePlayer,
+			Player:   g.GetWhite(),
 		}
 		board[6][col] = &Pieces{
 			Location: columnToLetter(col) + "2",
-			Color:    g.WhitePlayer.ColorPieces,
+			Color:    g.GetWhite().Color,
 			Piece:    "Pawn",
-			Player:   g.WhitePlayer,
+			Player:   g.GetWhite(),
 		}
 	}
 

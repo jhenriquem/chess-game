@@ -12,8 +12,7 @@ type Game struct {
 	MovePlayer chan *Player
 	Moves      []string
 
-	BlackPlayer *Player
-	WhitePlayer *Player
+	Players [2]*Player
 
 	Timer string
 
@@ -23,7 +22,7 @@ type Game struct {
 type Player struct {
 	Game          *Game
 	Client        *websocket.Conn
-	ColorPieces   string
+	Color         string
 	TimeRemaining string
 }
 

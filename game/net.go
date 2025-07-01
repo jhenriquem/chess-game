@@ -31,7 +31,9 @@ func (p *Player) MonitoringConnection() {
 	for {
 		_, _, err := p.Client.ReadMessage()
 		if err != nil {
-			log.Println("Erro na leitura:", err)
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err)
+			}
 			break
 		}
 	}

@@ -1,21 +1,44 @@
 package game
 
 import (
-	"github.com/gorilla/websocket"
+	"fmt"
 )
 
+func (g *Game) GetBlack() *Player {
+	if g.Players[0].Color == "black" {
+		return g.Players[0]
+	} else {
+		return g.Players[1]
+	}
+}
+
+func (g *Game) GetWhite() *Player {
+	if g.Players[0].Color == "white" {
+		return g.Players[0]
+	} else {
+		return g.Players[1]
+	}
+}
+
 func (g *Game) Run() {
-	g.BlackPlayer.Client.WriteMessage(websocket.TextMessage, []byte("Your are playing"))
-	g.WhitePlayer.Client.WriteMessage(websocket.TextMessage, []byte("Your are playing"))
+	for _, p := range g.Players {
+		msg := fmt.Sprintf("You are playing, you are %s", p.Color)
+		p.SendInfo(msg)
+	}
 
 	for {
 		select {
 		case player := <-g.Desconnect:
-			if player.ColorPieces == "black" {
-				g.WhitePlayer.Client.WriteMessage(websocket.TextMessage, []byte("Outher player desconnected"))
+			msg := "Outher player desconnected, you win"
+			if player.Color == "black" {
+				g.GetWhite().SendInfo(msg)
+				g.GetWhite().Client.Close()
 			} else {
-				g.BlackPlayer.Client.WriteMessage(websocket.TextMessage, []byte("Outher player desconnected"))
+				g.GetBlack().SendInfo(msg)
+				g.GetBlack().Client.Close()
 			}
+
+			break
 		}
 	}
 }

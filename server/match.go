@@ -2,23 +2,23 @@ package server
 
 import (
 	g "chess-game_server/game"
-	"fmt"
 
 	"github.com/gorilla/websocket"
 )
 
 func HandleMatch(p1, p2 *websocket.Conn) {
+	defer func() {
+		p1.Close()
+		p2.Close()
+	}()
+
 	game := g.New(p1, p2)
 
-	go game.Run()
+	for _, p := range game.Players {
+		go p.MonitoringConnection()
+	}
 
-	go game.BlackPlayer.MonitoringConnection()
-	go game.WhitePlayer.MonitoringConnection()
-
-	fmt.Println("Create new room")
+	game.Run()
 
 	// ... lógica da partida ...
-
-	// p1.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Bye"))
-	// p2.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Bye"))
 }

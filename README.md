@@ -14,10 +14,6 @@
 - [x] Encerrar a partida ao detectar desconexão
 - [x] Enviar mensagens entre os jogadores (relay)
  
- #### 🗒️ Notas
- - [ ] Melhora a logica de desconexão entre jogadores  
-
-
 #### 🔜 Etapas Futuras
 
 🧠 Lógica de Jogo
@@ -41,9 +37,11 @@
 
 ```bash
 chess-server/
-├── main.go
+├── cmd/main.go
 ├── server/
-│   └── server.go
+│   ├── match.go
+│   ├── connection.go
+│   └── core.go
 ├── game/
 │   ├── game.go
 │   ├── player.go
