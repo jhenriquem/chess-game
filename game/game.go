@@ -1,7 +1,10 @@
 package game
 
 import (
+	"chess-game/pkg/protocol"
 	"fmt"
+
+	"github.com/gorilla/websocket"
 )
 
 func (g *Game) GetBlack() *Player {
@@ -23,7 +26,7 @@ func (g *Game) GetWhite() *Player {
 func (g *Game) Run() {
 	for _, p := range g.Players {
 		msg := fmt.Sprintf("You are playing, you are %s", p.Color)
-		p.SendInfo(msg)
+		protocol.SendMessage(p.Client, msg, g.ToFormatForProtocol())
 	}
 
 	for {
@@ -31,10 +34,13 @@ func (g *Game) Run() {
 		case player := <-g.Desconnect:
 			msg := "Outher player desconnected, you win"
 			if player.Color == "black" {
-				g.GetWhite().SendInfo(msg)
+				protocol.SendMessage(g.GetWhite().Client, msg, g.ToFormatForProtocol())
+
+				g.GetWhite().Client.WriteMessage(websocket.CloseMessage, []byte{})
 				g.GetWhite().Client.Close()
 			} else {
-				g.GetBlack().SendInfo(msg)
+				protocol.SendMessage(g.GetBlack().Client, msg, g.ToFormatForProtocol())
+				g.GetBlack().Client.WriteMessage(websocket.CloseMessage, []byte{})
 				g.GetBlack().Client.Close()
 			}
 

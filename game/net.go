@@ -1,14 +1,25 @@
 package game
 
 import (
+	"chess-game/pkg/protocol"
 	"log"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
+func (g *Game) ToFormatForProtocol() protocol.Game {
+	return protocol.Game{
+		Board:   g.ToFormatBoard(),
+		Moves:   g.Moves,
+		Players: [2]protocol.Player{g.Players[0].ToFormatForJson(), g.Players[1].ToFormatForJson()},
+		Timer:   g.Timer,
+		Turn:    g.Turn.Color,
+	}
+}
+
 const (
-	pongWait   = 10 * time.Second // tempo para esperar o pong
+	pongWait   = 30 * time.Second
 	pingPeriod = (pongWait * 9) / 10
 )
 
@@ -50,7 +61,7 @@ func pingLoop(client *websocket.Conn, done <-chan struct{}) {
 		case <-done:
 			return
 		case <-ticker.C:
-			if err := client.WriteMessage(websocket.PingMessage, nil); err != nil {
+			if err := client.WriteControl(websocket.PingMessage, nil, time.Now().Add(pongWait)); err != nil {
 				log.Println("Erro ao enviar ping:", err)
 				return
 			}

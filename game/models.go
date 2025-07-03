@@ -10,7 +10,7 @@ type Game struct {
 	Desconnect chan *Player
 
 	MovePlayer chan *Player
-	Moves      []string
+	Moves      [][2]string
 
 	Players [2]*Player
 
@@ -24,6 +24,8 @@ type Player struct {
 	Client        *websocket.Conn
 	Color         string
 	TimeRemaining string
+	Moves         []string
+	Score         int
 }
 
 type Pieces struct {
@@ -31,4 +33,5 @@ type Pieces struct {
 	Location string
 	Color    string
 	Player   *Player
+	Icon     string
 }

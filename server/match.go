@@ -1,7 +1,7 @@
 package server
 
 import (
-	g "chess-game_server/game"
+	g "chess-game/game"
 
 	"github.com/gorilla/websocket"
 )

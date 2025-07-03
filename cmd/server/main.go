@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chess-game_server/server"
+	"chess-game/server"
 	"fmt"
 	"log"
 	"net/http"

@@ -11,7 +11,7 @@ func New(p1, p2 *websocket.Conn) *Game {
 
 		MovePlayer: make(chan *Player),
 		Desconnect: make(chan *Player),
-		Moves:      []string{},
+		Moves:      [][2]string{},
 	}
 
 	// Sets the white player as the first to play

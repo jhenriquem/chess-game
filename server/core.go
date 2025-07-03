@@ -38,7 +38,3 @@ func handlerGame(w http.ResponseWriter, r *http.Request) {
 
 	go HandleConnection(c)
 }
-
-func sendInfo(conn *websocket.Conn, msg string) {
-	conn.WriteJSON(map[string]string{"info": msg})
-}
