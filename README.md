@@ -42,22 +42,28 @@ chess-server/
 ├── cmd/
 │   ├── client/main.go
 │   └── server/main.go
-├── pkg/
+├── interal/
+│   ├── pkg/
+│   │   ├── format/
+│   │   └── pieces/
 │   ├── protocol/
-│   └── pieces/
-├── server/
-│   ├── match.go
-│   ├── connection.go
-│   └── core.go
-├── client/
-│   ├── match.go
-│   ├── connection.go
-│   └── core.go
-├── game/
-│   ├── game.go
-│   ├── player.go
-│   ├── ...
-│   └── board.go 
+│   │   ├── send.go
+│   │   └── message.go
+│   ├── server/
+│   │   ├── match.go
+│   │   ├── connection.go
+│   │   └── core.go
+│   ├── client/
+│   │   ├── render.go
+│   │   └── core.go
+│   ├── game/
+│   │   ├── game.go
+│   │   ├── player.go
+│   │   ├── ...
+│   │   └── board.go 
+│   └── models/
+│       ├── game.go
+│       └── protocol.go 
 ├── go.mod
 └── README.md (this file)
 

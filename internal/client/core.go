@@ -1,7 +1,7 @@
 package client
 
 import (
-	"chess-game/pkg/protocol"
+	"chess-game/internal/protocol"
 	"encoding/json"
 	"fmt"
 	"log"

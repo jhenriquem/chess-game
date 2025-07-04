@@ -1,7 +1,8 @@
 package server
 
 import (
-	"chess-game/pkg/protocol"
+	"chess-game/internal/model"
+	"chess-game/internal/protocol"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -12,7 +13,7 @@ func HandleConnection(conn *websocket.Conn) {
 
 	mutex.Lock()
 	if waitingConn == nil {
-		protocol.SendMessage(conn, "Waiting for another player.", protocol.Game{})
+		protocol.SendMessage(conn, "Waiting for another player.", model.Protogame{})
 		waitingConn = conn
 		mutex.Unlock()
 
@@ -24,7 +25,7 @@ func HandleConnection(conn *websocket.Conn) {
 		if waitingConn == conn {
 			waitingConn = nil
 
-			protocol.SendMessage(conn, "Waiting time is over. Please try again later.", protocol.Game{})
+			protocol.SendMessage(conn, "Waiting time is over. Please try again later.", model.Protogame{})
 			conn.WriteMessage(websocket.CloseMessage, []byte{})
 			conn.Close()
 		}
@@ -38,8 +39,8 @@ func HandleConnection(conn *websocket.Conn) {
 
 	msg := "Player found, starting game"
 
-	protocol.SendMessage(p1, msg, protocol.Game{})
-	protocol.SendMessage(conn, msg, protocol.Game{})
+	protocol.SendMessage(p1, msg, model.Protogame{})
+	protocol.SendMessage(conn, msg, model.Protogame{})
 
 	go HandleMatch(p1, conn)
 }

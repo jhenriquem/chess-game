@@ -1,12 +1,13 @@
 package protocol
 
 import (
+	"chess-game/internal/model"
 	"fmt"
 
 	"github.com/gorilla/websocket"
 )
 
-func SendMessage(conn *websocket.Conn, info string, game Game) error {
+func SendMessage(conn *websocket.Conn, info string, game model.Protogame) error {
 	body := Message{
 		Info: info,
 		Game: game,

@@ -1,10 +1,12 @@
-package game
+package model
 
 import (
 	"github.com/gorilla/websocket"
 )
 
 type Game struct {
+	ID string
+
 	Board [8][8]*Pieces
 
 	Desconnect chan *Player

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"chess-game/client"
+	"chess-game/internal/client"
 	"log"
 
 	"github.com/joho/godotenv"

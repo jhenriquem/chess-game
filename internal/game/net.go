@@ -1,29 +1,19 @@
 package game
 
 import (
-	"chess-game/pkg/protocol"
+	"chess-game/internal/model"
 	"log"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
-func (g *Game) ToFormatForProtocol() protocol.Game {
-	return protocol.Game{
-		Board:   g.ToFormatBoard(),
-		Moves:   g.Moves,
-		Players: [2]protocol.Player{g.Players[0].ToFormatForJson(), g.Players[1].ToFormatForJson()},
-		Timer:   g.Timer,
-		Turn:    g.Turn.Color,
-	}
-}
-
 const (
 	pongWait   = 30 * time.Second
 	pingPeriod = (pongWait * 9) / 10
 )
 
-func (p *Player) MonitoringConnection() {
+func MonitoringConnection(p *model.Player) {
 	defer func() {
 		p.Game.Desconnect <- p
 		p.Client.Close()
