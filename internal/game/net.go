@@ -2,7 +2,12 @@ package game
 
 import (
 	"chess-game/internal/model"
+	"chess-game/internal/pkg/format"
+	"chess-game/internal/protocol"
+	"encoding/json"
+	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -13,7 +18,7 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 )
 
-func MonitoringConnection(p *model.Player) {
+func Monitoring(p *model.Player) {
 	defer func() {
 		p.Game.Desconnect <- p
 		p.Client.Close()
@@ -30,13 +35,25 @@ func MonitoringConnection(p *model.Player) {
 	go pingLoop(p.Client, done)
 
 	for {
-		_, _, err := p.Client.ReadMessage()
+		var clientMessage model.ClientMessage
+		_, msg, err := p.Client.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
 			}
+			fmt.Println("Error reading player message :", err.Error())
 			break
+
 		}
+
+		json.Unmarshal(msg, &clientMessage)
+
+		// fmt.Println(msg)
+
+		fmt.Printf("%s player ( message type => %s)\n", p.Color, clientMessage.Type)
+		fmt.Printf("Move %s player : %s\n\n", p.Color, strings.Join(clientMessage.Move, ""))
+
+		protocol.SendMessage(p.Client, "playerMove", "Sua vez", format.ToFormatGame(p.Game))
 	}
 
 	close(done) // avisa para parar os pings

@@ -1,13 +1,15 @@
 package client
 
 import (
+	"bufio"
+	"chess-game/internal/model"
+	"chess-game/internal/pkg/utils"
 	"chess-game/internal/protocol"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
 	"os/signal"
-	"time"
 
 	"github.com/fatih/color"
 	"github.com/gorilla/websocket"
@@ -17,23 +19,51 @@ func clearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
+func QuestionGame() bool {
+	var wantPlay string
+	fmt.Println("You are play? [Y/N]")
+	_, err := fmt.Scanln(&wantPlay)
+	if err != nil {
+		return false
+	}
+
+	switch wantPlay {
+	case "Y":
+		return true
+	default:
+		return false
+
+	}
+}
+
+var (
+	Player = model.Player{}
+	IsGame = false
+)
+
 func Run() {
 	url := fmt.Sprintf("ws://%s/game", os.Getenv("SERVER"))
-	fmt.Println("Conectando ao servidor:", url)
 
+	utils.Introdution()
+	continueGame := QuestionGame()
+	if !continueGame {
+		fmt.Println("👋 Bye")
+		return
+	}
+
+	fmt.Println("Conectando ao servidor:", url)
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
 
-	defer conn.Close()
+	Player.Client = conn
 
-	conn.SetReadDeadline(time.Now().Add(30 * time.Second))
-	conn.SetPingHandler(func(appData string) error {
-		conn.SetReadDeadline(time.Now().Add(30 * time.Second))
-		conn.WriteControl(websocket.PongMessage, nil, time.Now().Add(30*time.Second))
-		return nil
-	})
+	if IsGame {
+		SetPinglogic(conn)
+	}
+
+	defer conn.Close()
 
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
@@ -57,7 +87,23 @@ func Run() {
 			if res.Info != "" {
 				color.Green("Servidor: %s", res.Info)
 			}
-			RenderBoard(res.Game.Board)
+
+			if res.TypeInfo == "initGame" {
+				IsGame = true
+			}
+
+			if IsGame {
+				RenderBoard(res.Game.Board)
+
+				fmt.Print("What's your move? :")
+
+				scanner := bufio.NewScanner(os.Stdin)
+
+				scanner.Scan()
+
+				move := scanner.Text()
+				SendMove(move, conn)
+			}
 		}
 	}()
 

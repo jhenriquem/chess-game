@@ -15,7 +15,7 @@ func HandleMatch(p1, p2 *websocket.Conn) {
 	gameId := g.New(p1, p2)
 
 	for _, p := range g.GetOne(gameId).Players {
-		go g.MonitoringConnection(p)
+		go g.Monitoring(p)
 	}
 
 	g.Run(gameId)

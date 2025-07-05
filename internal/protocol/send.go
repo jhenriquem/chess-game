@@ -7,10 +7,11 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func SendMessage(conn *websocket.Conn, info string, game model.Protogame) error {
+func SendMessage(conn *websocket.Conn, typeInfo, info string, game model.Protogame) error {
 	body := Message{
-		Info: info,
-		Game: game,
+		TypeInfo: typeInfo,
+		Info:     info,
+		Game:     game,
 	}
 
 	err := conn.WriteJSON(body)
