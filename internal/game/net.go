@@ -48,8 +48,6 @@ func Monitoring(p *model.Player) {
 
 		json.Unmarshal(msg, &clientMessage)
 
-		// fmt.Println(msg)
-
 		fmt.Printf("%s player ( message type => %s)\n", p.Color, clientMessage.Type)
 		fmt.Printf("Move %s player : %s\n\n", p.Color, strings.Join(clientMessage.Move, ""))
 

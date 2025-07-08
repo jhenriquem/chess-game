@@ -1,8 +1,12 @@
-package client
+package ui
 
 import "fmt"
 
-func RenderBoard(board [8][8]string) {
+func ClearScreen() {
+	fmt.Print("\033[H\033[2J")
+}
+
+func Board(board [8][8]string) {
 	// Cabeçalho superior
 	fmt.Println("    ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐")
 

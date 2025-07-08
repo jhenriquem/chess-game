@@ -1,6 +1,22 @@
 package utils
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
+
+func QuestionGame() bool {
+	var wantPlay string
+	fmt.Print("You are play? [Y/N]: ")
+	_, err := fmt.Scanln(&wantPlay)
+	if err != nil {
+		return false
+	}
+
+	wantPlay = strings.TrimSpace(strings.ToUpper(wantPlay))
+
+	return wantPlay == "Y"
+}
 
 func Introdution() {
 	fmt.Println("♟️ Welcome to the Game")
@@ -16,4 +32,5 @@ func Introdution() {
 	fmt.Println("")
 	fmt.Println("❗ If you want to castl, just type:")
 	fmt.Println("🔹 O-O or O-O-O")
+	fmt.Println("")
 }
