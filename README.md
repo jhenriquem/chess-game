@@ -14,8 +14,6 @@
 - [x] Encerrar a partida ao detectar desconexão
 - [x] Estrutura basica do client
 
-#### 🗒️ Notas 
-- Provavelmente vou separar a struct `Game` do pacote game. Irei criar um pacote `models` que armazene esse tipo de dados. Modificarei o projeto para que se adpte a isso   
 #### 🔜 Etapas Futuras
 
 🧠 Lógica de Jogo

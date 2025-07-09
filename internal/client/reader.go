@@ -33,7 +33,10 @@ func ReadServer(conn *websocket.Conn, done chan struct{}) {
 		}
 
 		if data.Game.Turn != "" {
-			ui.Load(data.Game.Board)
+
+			isTurn := false
+
+			ui.Load(data.Game.Board, isTurn)
 
 			if !inGame {
 				net.SetPingLogic(conn) // Ativa o monitoramento de ping

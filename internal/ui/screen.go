@@ -2,8 +2,11 @@ package ui
 
 import "fmt"
 
-func Load(board [8][8]string) {
+func Load(board [8][8]string, isTurn bool) {
 	ClearScreen()
 	Board(board)
-	fmt.Print("What's your move ? (e4)")
+
+	if isTurn {
+		fmt.Print("What's your move ? [initial position][final position] :")
+	}
 }

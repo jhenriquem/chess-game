@@ -1,6 +1,7 @@
 package client
 
 import (
+	"chess-game/internal/model"
 	"chess-game/internal/net"
 	"chess-game/internal/pkg/utils"
 	"chess-game/internal/ui"
@@ -12,7 +13,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var inGame = false
+var (
+	inGame = false
+	Player = model.Protoplayer{}
+)
 
 func Run(url string) {
 	utils.Introdution()

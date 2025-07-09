@@ -20,6 +20,7 @@ func GetOne(id string) *model.Game {
 
 func Run(id string) {
 	g := GetOne(id)
+
 	for _, p := range g.Players {
 		msg := fmt.Sprintf("You are playing, you are %s", p.Color)
 		protocol.SendMessage(p.Client, "initGame", msg, format.ToFormatGame(g))

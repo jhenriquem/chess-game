@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/corentings/chess/v2"
 	"github.com/gorilla/websocket"
 )
 
@@ -18,7 +19,7 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 )
 
-func Monitoring(p *model.Player) {
+func Monitoring(p *model.Player, game *chess.Game) {
 	defer func() {
 		p.Game.Desconnect <- p
 		p.Client.Close()
@@ -51,7 +52,13 @@ func Monitoring(p *model.Player) {
 		fmt.Printf("%s player ( message type => %s)\n", p.Color, clientMessage.Type)
 		fmt.Printf("Move %s player : %s\n\n", p.Color, strings.Join(clientMessage.Move, ""))
 
+		move, isValid := ValidMove(strings.Join(clientMessage.Move, ""), game)
+		if isValid {
+			fmt.Printf("This move %s is valid", move)
+		}
+
 		protocol.SendMessage(p.Client, "playerMove", "Sua vez", format.ToFormatGame(p.Game))
+
 	}
 
 	close(done) // avisa para parar os pings
