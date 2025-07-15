@@ -12,7 +12,15 @@ const (
 	pingPeriod = (pongWait * 9) / 10
 )
 
-func SetPingLogic(conn *websocket.Conn) {
+func SetPongHandler(conn *websocket.Conn) {
+	conn.SetReadDeadline(time.Now().Add(pongWait))
+	conn.SetPongHandler(func(string) error {
+		conn.SetReadDeadline(time.Now().Add(pongWait))
+		return nil
+	})
+}
+
+func SetPingHandler(conn *websocket.Conn) {
 	conn.SetReadDeadline(time.Now().Add(pongWait))
 	conn.SetPingHandler(func(appData string) error {
 		conn.SetReadDeadline(time.Now().Add(pongWait))
@@ -29,8 +37,8 @@ func StartPinger(conn *websocket.Conn, done <-chan struct{}) {
 		case <-done:
 			return
 		case <-ticker.C:
-			if err := conn.WriteMessage(websocket.PingMessage, nil); err != nil {
-				log.Println("Erro ao enviar ping do client:", err)
+			if err := conn.WriteControl(websocket.PingMessage, nil, time.Now().Add(pongWait)); err != nil {
+				log.Println("Erro ao enviar ping:", err)
 				return
 			}
 		}

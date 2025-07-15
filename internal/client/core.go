@@ -4,6 +4,7 @@ import (
 	"chess-game/internal/model"
 	"chess-game/internal/net"
 	"chess-game/internal/pkg/utils"
+	"chess-game/internal/protocol"
 	"chess-game/internal/ui"
 	"fmt"
 	"log"
@@ -36,11 +37,34 @@ func Run(url string) {
 
 	done := make(chan struct{})
 	interrupt := make(chan os.Signal, 1)
+	channel := make(chan protocol.Message)
 
 	signal.Notify(interrupt, os.Interrupt)
 
-	go ReadServer(conn, done)
-	go net.InputLoop(conn, done)
+	go net.ReaderServer(conn, done, channel)
+	go func() {
+		for {
+			select {
+			case data := <-channel:
+				if data.Info != "" {
+					fmt.Println("🟢", data.Info)
+				}
+
+				if data.Game.Turn != "" {
+					ui.Load(data.Game.Board, true)
+				}
+
+				if !inGame {
+					net.SetPingHandler(conn) // Ativa o monitoramento de ping
+					inGame = true
+				}
+			case <-done:
+				break
+			}
+		}
+	}()
+
+	go net.ClientInputLoop(conn, done)
 
 	select {
 	case <-interrupt:

@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func InputLoop(conn *websocket.Conn, done <-chan struct{}) {
+func ClientInputLoop(conn *websocket.Conn, done <-chan struct{}) {
 	scanner := bufio.NewScanner(os.Stdin)
 
 	for {

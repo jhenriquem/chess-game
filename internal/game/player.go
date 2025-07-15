@@ -6,8 +6,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func GetPlayer(id, color string) *model.Player {
-	for _, player := range GetOne(id).Players {
+func GetPlayer(game *model.Game, color string) *model.Player {
+	for _, player := range game.Players {
 		if player.Color == color {
 			return player
 		}

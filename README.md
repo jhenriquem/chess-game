@@ -3,8 +3,8 @@
  🧠 Decidi criar esse projeto para o [Hack Club Summer of Making 2025!](https://summer.hackclub.com/). Um servidor e um client de um jogo xadrez online desenvolvido com Go e WebSocket usando a biblioteca [gorilla/websocket](https://github.com/gorilla/websocket). O servidor permite a conexão de dois jogadores, gerencia o jogo e verifica a integridade da conexão usando um sistema de ping/pong. O client é responsável pela conexão com o sevidor e renderização do jogo no terminal do player. 
 
 
-### 📌 Project progress
-#### ✅ Etapas Concluídas
+### 📌 Progresso
+#### ✅ Feito
 
 - [x] Criar servidor WebSocket básico 
 - [x] Estruturar projeto com separação de responsabilidades (`game/`, `core/`, `server/`)
@@ -14,24 +14,25 @@
 - [x] Encerrar a partida ao detectar desconexão
 - [x] Estrutura basica do client
 
+#### 📍 Atualmente 
+- [/] Tratando do envio de jogadas pelo player
+- [/] Definir representação do tabuleiro de xadrez
+- [/] Validar jogadas no servidor
+
+>[!NOTE]
+> Há um bug/error na logica de validação de jogadas. Provavelmente esta relacionada à notação dos movimentos
+
+
 #### 🔜 Etapas Futuras
 
 🧠 Lógica de Jogo
-- [ ] Tratar o envio de jogadas pelo player
-- [ ] Definir representação do tabuleiro de xadrez
 - [ ] Implementar controle de turno e regras de movimento
-- [ ] Validar jogadas no servidor
 - [ ] Detectar xeque, xeque-mate e empate
 
 ⏱ Controle de Tempo
 
 - [ ] Implementar cronômetro por jogador (ex: 10 minutos)
 - [ ] Finalizar partida quando o tempo de um jogador acabar
-
-💬 Comunicação
-
-- [ ] Criar tipos de mensagens (ex: `move`, `chat`, `resign`, `timeout`)
-- [ ] Validar e interpretar cada tipo de mensagem no servidor
 
 ## 📁 Estrutura do Projeto
 
@@ -41,27 +42,15 @@ chess-server/
 │   ├── client/main.go
 │   └── server/main.go
 ├── interal/
-│   ├── pkg/
-│   │   ├── format/
-│   │   └── pieces/
-│   ├── protocol/
-│   │   ├── send.go
-│   │   └── message.go
-│   ├── server/
-│   │   ├── match.go
-│   │   ├── connection.go
-│   │   └── core.go
-│   ├── client/
-│   │   ├── render.go
-│   │   └── core.go
-│   ├── game/
-│   │   ├── game.go
-│   │   ├── player.go
-│   │   ├── ...
-│   │   └── board.go 
-│   └── models/
-│       ├── game.go
-│       └── protocol.go 
+│   ├── pkg/          # Pacotes utilitarios 
+│   ├── protocol/     # Protocolo de troca de mensagens entre server e client
+│   ├── server/       # Parte do servidor 
+│   ├── client/       # Parte do client
+│   ├── game/         # Estrutura central do game
+│   ├── net/          # Conexão entre client e servidor 
+│   ├── logic/        # Logica do jogo, movimentos, tabuleiro,...
+│   ├── ui/           # Gerenciamento da UI do cliente
+│   └── models/       # Modelos e structs
 ├── go.mod
 └── README.md (this file)
 

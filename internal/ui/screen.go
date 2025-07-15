@@ -7,6 +7,6 @@ func Load(board [8][8]string, isTurn bool) {
 	Board(board)
 
 	if isTurn {
-		fmt.Print("What's your move ? [initial position][final position] :")
+		fmt.Print("What's your move ? [initial position] [final position] :")
 	}
 }

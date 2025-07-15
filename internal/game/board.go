@@ -3,59 +3,24 @@ package game
 import (
 	"chess-game/internal/model"
 	"chess-game/internal/pkg/pieces"
-	"fmt"
 )
 
-func SetupBoard(id string) {
-	var board [8][8]*model.Pieces
-
-	columnToLetter := func(col int) string {
-		return string(rune('a' + col))
-	}
+func SetupBoard(game *model.Game) {
+	var board [8][8]string = [8][8]string{{}}
 
 	for col, piece := range pieces.Major {
-		board[0][col] = &model.Pieces{
-			Location: columnToLetter(col) + "8",
-			Color:    "black",
-			Piece:    piece,
-			Icon:     pieces.Icons["B"+piece],
-			Player:   GetPlayer(id, "black"),
-		}
-		board[1][col] = &model.Pieces{
-			Location: columnToLetter(col) + "7",
-			Color:    "black",
-			Piece:    "pawn",
-			Icon:     pieces.Icons["Bpawn"],
-			Player:   GetPlayer(id, "black"),
-		}
-	}
+		board[0][col] = pieces.Icons["B"+piece]
+		board[1][col] = pieces.Icons["Bpawn"]
 
-	for col, piece := range pieces.Major {
-		board[7][col] = &model.Pieces{
-			Location: columnToLetter(col) + "1",
-			Color:    "white",
-			Piece:    piece,
-			Icon:     pieces.Icons["W"+piece],
-			Player:   GetPlayer(id, "white"),
-		}
-		board[6][col] = &model.Pieces{
-			Location: columnToLetter(col) + "2",
-			Color:    "white",
-			Piece:    "Pawn",
-			Icon:     pieces.Icons["Wpawn"],
-			Player:   GetPlayer(id, "white"),
-		}
+		board[6][col] = pieces.Icons["Wpawn"]
+		board[7][col] = pieces.Icons["W"+piece]
 	}
 
 	for row := 2; row <= 5; row++ {
 		for col := 0; col < 8; col++ {
-			board[row][col] = &model.Pieces{
-				Location: columnToLetter(col) + fmt.Sprintf("%d", 8-row),
-				Color:    "",
-				Piece:    "",
-			}
+			board[row][col] = " "
 		}
 	}
 
-	GetOne(id).Board = board
+	game.Board = board
 }

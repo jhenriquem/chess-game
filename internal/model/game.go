@@ -1,13 +1,15 @@
 package model
 
 import (
+	"github.com/corentings/chess/v2"
 	"github.com/gorilla/websocket"
 )
 
 type Game struct {
 	ID string
 
-	Board [8][8]*Pieces
+	Board [8][8]string
+	Chess *chess.Game
 
 	Desconnect chan *Player
 

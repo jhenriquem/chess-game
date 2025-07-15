@@ -2,28 +2,34 @@ package server
 
 import (
 	g "chess-game/internal/game"
-	"fmt"
+	"chess-game/internal/net"
 
-	"github.com/corentings/chess/v2"
 	"github.com/gorilla/websocket"
 )
 
 func HandleMatch(p1, p2 *websocket.Conn) {
-	game := chess.NewGame()
-
 	defer func() {
 		p1.Close()
 		p2.Close()
 	}()
 
-	gameId := g.New(p1, p2)
+	game := g.New(p1, p2)
 
-	for _, p := range g.GetOne(gameId).Players {
-		go g.Monitoring(p, game)
+	for _, p := range game.Players {
+		go func() {
+			done := net.MonitoringClient(p.Client, p.Game)
+
+			select {
+			case <-done:
+				p.Game.Desconnect <- p
+				p.Client.Close()
+			}
+		}()
 	}
 
-	fmt.Println(game.Position().Board())
-	g.Run(gameId)
+	// fmt.Println(g.GetOne(gameId).Chess.Position().Board().Draw())
+
+	g.Run(game)
 
 	// ... lógica da partida ...
 }

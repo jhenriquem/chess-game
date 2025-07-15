@@ -13,7 +13,7 @@ func Board(board [8][8]string) {
 	for i, row := range board {
 		fmt.Printf(" %d  │", 8-i) // Números das linhas (de 8 a 1)
 		for _, piece := range row {
-			if piece == "" {
+			if piece == " " {
 				fmt.Print("     │")
 			} else {
 				fmt.Printf(" %s │", piece)
