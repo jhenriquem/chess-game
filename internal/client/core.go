@@ -46,13 +46,7 @@ func Run(url string) {
 		for {
 			select {
 			case data := <-channel:
-				if data.Info != "" {
-					fmt.Println("🟢", data.Info)
-				}
-
-				if data.Game.Turn != "" {
-					ui.Load(data.Game.Board, true)
-				}
+				ui.Load(data)
 
 				if !inGame {
 					net.SetPingHandler(conn) // Ativa o monitoramento de ping

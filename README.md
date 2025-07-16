@@ -15,22 +15,18 @@
 - [x] Estrutura basica do client
 
 #### 📍 Atualmente 
-- [/] Tratando do envio de jogadas pelo player
-- [/] Definir representação do tabuleiro de xadrez
-- [/] Validar jogadas no servidor
+- 🔧 Tratando do envio de jogadas pelo player
+- 🔧 Definir representação do tabuleiro de xadrez
+- 🔧 Validar jogadas no servidor
+- 🔧 Melhorar a logica de troca de mensagens e tipos de mensagens 
 
 >[!NOTE]
-> Há um bug/error na logica de validação de jogadas. Provavelmente esta relacionada à notação dos movimentos
+> Há algum bug na conexão entre servidor e client. Algumas vezes o servidor alega timeout por parte do client 
 
+#### 🧠  Etapas Futuras
 
-#### 🔜 Etapas Futuras
-
-🧠 Lógica de Jogo
 - [ ] Implementar controle de turno e regras de movimento
 - [ ] Detectar xeque, xeque-mate e empate
-
-⏱ Controle de Tempo
-
 - [ ] Implementar cronômetro por jogador (ex: 10 minutos)
 - [ ] Finalizar partida quando o tempo de um jogador acabar
 

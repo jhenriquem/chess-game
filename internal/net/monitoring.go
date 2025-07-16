@@ -5,6 +5,7 @@ import (
 	"chess-game/internal/model"
 	"chess-game/internal/pkg/format"
 	"chess-game/internal/protocol"
+	"fmt"
 
 	"github.com/gorilla/websocket"
 )
@@ -28,10 +29,14 @@ func MonitoringClient(conn *websocket.Conn, game *model.Game) chan struct{} {
 		select {
 		case msg := <-message:
 			if err := logic.MovesLogic(msg, game); err != nil {
-				protocol.SendMessage(conn, "playerMove", err.Error(), format.ToFormatGame(game))
+				message := fmt.Sprintf("🟢 It's still your turn ( %s )", err.Error())
+				protocol.SendMessage(conn, "TURN", message, true, format.ToFormatGame(game, game.Turn))
 			} else {
-				for _, conn := range game.Players {
-					protocol.SendMessage(conn.Client, "playerMove", "Update", format.ToFormatGame(game))
+				protocol.SendMessage(game.Turn.Client, "TURN", "🟢 It's your turn", true, format.ToFormatGame(game, game.Turn))
+				for _, player := range game.Players {
+					if player != game.Turn {
+						protocol.SendMessage(player.Client, "WAIT", "🫸 Waiting for player to move", false, format.ToFormatGame(game, player))
+					}
 				}
 			}
 		}

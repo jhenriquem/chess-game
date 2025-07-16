@@ -3,7 +3,8 @@ package protocol
 import "chess-game/internal/model"
 
 type Message struct {
-	TypeInfo string          // initGame, desconnected, timeout, yourTurn, playerMove, waiting, playerFound
-	Info     string          `json:"info"`
+	TypeInfo string // INIT, DESCONNECTED, TIMEOUT, TURN, WAIT, PLAYER_FOUND
+	Info     string `json:"info"`
+	IsTurn   bool
 	Game     model.Protogame `json:"game,omitempty"`
 }

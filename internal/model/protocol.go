@@ -12,7 +12,7 @@ type Protogame struct {
 
 	Moves [][2]string
 
-	Players [2]Protoplayer
+	Player Protoplayer
 
 	Timer string
 

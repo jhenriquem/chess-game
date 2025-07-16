@@ -13,7 +13,7 @@ func HandleConnection(conn *websocket.Conn) {
 
 	mutex.Lock()
 	if waitingConn == nil {
-		protocol.SendMessage(conn, "waiting", "Waiting for another player.", model.Protogame{})
+		protocol.SendMessage(conn, "WAIT", "🫸 Waiting for another player.", false, model.Protogame{})
 		waitingConn = conn
 		mutex.Unlock()
 
@@ -25,7 +25,7 @@ func HandleConnection(conn *websocket.Conn) {
 		if waitingConn == conn {
 			waitingConn = nil
 
-			protocol.SendMessage(conn, "timeout", "Waiting time is over. Please try again later.", model.Protogame{})
+			protocol.SendMessage(conn, "TIMEOUT", "❌ Waiting time is over. Please try again later.", false, model.Protogame{})
 			conn.WriteMessage(websocket.CloseMessage, []byte{})
 			conn.Close()
 		}
@@ -37,10 +37,10 @@ func HandleConnection(conn *websocket.Conn) {
 	waitingConn = nil
 	mutex.Unlock()
 
-	msg := "Player found, starting game"
+	msg := "🔗 Player found, starting game"
 
-	protocol.SendMessage(p1, "playerFound", msg, model.Protogame{})
-	protocol.SendMessage(conn, "playerFound", msg, model.Protogame{})
+	protocol.SendMessage(p1, "PLAYER_FOUND", msg, false, model.Protogame{})
+	protocol.SendMessage(conn, "PLAYER_FOUND", msg, false, model.Protogame{})
 
 	go HandleMatch(p1, conn)
 }

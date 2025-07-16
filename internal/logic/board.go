@@ -40,7 +40,7 @@ func UpdateBoard(game *model.Game) {
 	fmt.Println(game.Chess.Position().Board())
 
 	FormatFEN(game)
-	ui.Board(game.Board)
+	ui.Board(game.Board, "dd")
 }
 
 func FormatFEN(game *model.Game) {

@@ -1,12 +1,22 @@
 package ui
 
-import "fmt"
+import (
+	"chess-game/internal/protocol"
+	"fmt"
+)
 
-func Load(board [8][8]string, isTurn bool) {
+func Load(data protocol.Message) {
 	ClearScreen()
-	Board(board)
 
-	if isTurn {
-		fmt.Print("What's your move ? [initial position] [final position] :")
+	if data.Info != "" {
+		fmt.Printf("\n %s \n ", data.Info)
+	}
+
+	if data.Game.Turn != "" {
+		Board(data.Game.Board, data.Game.Player.Color)
+	}
+
+	if data.IsTurn {
+		fmt.Print("\n 🔵 What's your move ? [initial][final] :")
 	}
 }
