@@ -13,7 +13,7 @@ type Game struct {
 
 	Desconnect chan *Player
 
-	MovePlayer chan *Player
+	MoveResult string
 	Moves      [][2]string
 
 	Players [2]*Player

@@ -8,39 +8,58 @@ func ClearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func inverterBoard(arr *[8][8]string) {
+func inverterBoard(arr [8][8]string) [8][8]string {
+	var board [8][8]string
 	start := 0
 	end := 7
 
 	for start < end {
-		arr[start], arr[end] = arr[end], arr[start]
+		board[start], board[end] = arr[end], arr[start]
 		start++
 		end--
 	}
-}
 
-func Board(board [8][8]string, color string) {
-	// Cabeçalho superior
-	fmt.Println("    ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐")
+	for i, line := range board {
 
-	if color == "black" {
-		inverterBoard(&board)
+		start = 0
+		end = 7
+
+		for range line {
+			if start < end {
+				board[i][start], board[i][end] = board[i][end], board[i][start]
+				start++
+				end--
+			}
+		}
 	}
 
+	return board
+}
+
+func Board(gameBoard [8][8]string, color string) {
+	board := gameBoard
+
+	if color == "black" {
+		board = inverterBoard(board)
+	}
+
+	fmt.Println("    ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┐")
+
 	for i, row := range board {
+		lineNumber := 8 - i
 		if color == "black" {
-			fmt.Printf("  %d  │", i+1) // Números das linhas (de 8 a 1)
-		} else {
-			fmt.Printf("  %d  │", 8-i) // Números das linhas (de 8 a 1)
+			lineNumber = i + 1
 		}
-		for c, piece := range row {
+		fmt.Printf("  %d  │", lineNumber)
+
+		for _, piece := range row {
 			if piece == " " {
 				fmt.Print("     │")
 			} else {
-				fmt.Printf(" %s │", row[7-c])
+				fmt.Printf(" %s │", piece)
 			}
 		}
-		// Linha horizontal de separação entre as linhas do tabuleiro
+
 		if i < 7 {
 			fmt.Println()
 			fmt.Println("     ├─────┼─────┼─────┼─────┼─────┼─────┼─────┼─────┤")
@@ -49,7 +68,6 @@ func Board(board [8][8]string, color string) {
 		}
 	}
 
-	// Rodapé com letras das colunas
 	fmt.Println("     └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘")
 	if color == "black" {
 		fmt.Println("        h     g     f     e     d     c     b     a")

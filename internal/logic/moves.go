@@ -8,7 +8,7 @@ import (
 	"github.com/corentings/chess/v2"
 )
 
-func MovesLogic(msg model.ClientMessage, game *model.Game) error {
+func MovesLogic(msg model.ClientMessage, game *model.Game) (string, error) {
 	if msg.Type == "move" {
 		move := strings.Join(msg.Move, "")
 
@@ -18,12 +18,14 @@ func MovesLogic(msg model.ClientMessage, game *model.Game) error {
 
 			ChangeTurn(game)
 
-			return nil
+			result := CheckActionOfMoves(game)
+
+			return result, nil
 		} else {
-			return fmt.Errorf("Invalid move or error: %s", mv)
+			return "", fmt.Errorf("Invalid move or error: %s", mv)
 		}
 	}
-	return nil
+	return "", nil
 }
 
 func ChangeTurn(game *model.Game) {
@@ -50,7 +52,6 @@ func validMove(move string, game *model.Game) (string, bool) {
 	validMoves := game.Chess.Position().ValidMoves()
 
 	for _, m := range validMoves {
-		fmt.Print(m.String() + "   ")
 		if m.String() == move {
 			if err := game.Chess.PushNotationMove(m.String(), chess.UCINotation{}, nil); err != nil {
 				return err.Error(), false

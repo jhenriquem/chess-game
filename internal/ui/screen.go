@@ -16,6 +16,8 @@ func Load(data protocol.Message) {
 		Board(data.Game.Board, data.Game.Player.Color)
 	}
 
+	ShowMessage(data.Game.MoveResult)
+
 	if data.IsTurn {
 		fmt.Print("\n 🔵 What's your move ? [initial][final] :")
 	}

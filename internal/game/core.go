@@ -20,7 +20,6 @@ func New(p1, p2 *websocket.Conn) *model.Game {
 
 		Chess: chess.NewGame(),
 
-		MovePlayer: make(chan *model.Player),
 		Desconnect: make(chan *model.Player),
 		Moves:      [][2]string{{}},
 	}

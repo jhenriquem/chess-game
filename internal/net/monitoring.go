@@ -28,10 +28,12 @@ func MonitoringClient(conn *websocket.Conn, game *model.Game) chan struct{} {
 	for {
 		select {
 		case msg := <-message:
-			if err := logic.MovesLogic(msg, game); err != nil {
+			if result, err := logic.MovesLogic(msg, game); err != nil {
 				message := fmt.Sprintf("🟢 It's still your turn ( %s )", err.Error())
 				protocol.SendMessage(conn, "TURN", message, true, format.ToFormatGame(game, game.Turn))
 			} else {
+				game.MoveResult = result
+
 				protocol.SendMessage(game.Turn.Client, "TURN", "🟢 It's your turn", true, format.ToFormatGame(game, game.Turn))
 				for _, player := range game.Players {
 					if player != game.Turn {

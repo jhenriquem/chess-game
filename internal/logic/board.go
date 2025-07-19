@@ -3,7 +3,6 @@ package logic
 import (
 	"chess-game/internal/model"
 	"chess-game/internal/pkg/pieces"
-	"chess-game/internal/ui"
 	"fmt"
 	"strconv"
 	"strings"
@@ -31,7 +30,7 @@ func returnPiece(piece rune) string {
 	case "p":
 		pieceName = "pawn"
 	default:
-		return "  "
+		return " "
 	}
 	return pieces.Icons[color+pieceName]
 }
@@ -40,7 +39,6 @@ func UpdateBoard(game *model.Game) {
 	fmt.Println(game.Chess.Position().Board())
 
 	FormatFEN(game)
-	ui.Board(game.Board, "dd")
 }
 
 func FormatFEN(game *model.Game) {
