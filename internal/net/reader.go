@@ -1,11 +1,10 @@
 package net
 
 import (
-	"chess-game/internal/model"
 	"chess-game/internal/protocol"
+	"chess-game/model"
 	"fmt"
 	"log"
-	"strings"
 
 	"github.com/gorilla/websocket"
 )
@@ -16,6 +15,10 @@ func ReaderServer(conn *websocket.Conn, done chan struct{}, message chan protoco
 
 		err := conn.ReadJSON(&data)
 		if err != nil {
+			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
+				log.Printf("error: %v", err)
+			}
+
 			log.Println("Erro ao ler mensagem:", err)
 			close(done)
 			break
@@ -25,7 +28,8 @@ func ReaderServer(conn *websocket.Conn, done chan struct{}, message chan protoco
 	}
 }
 
-func ReaderClient(conn *websocket.Conn, game *model.Game, message chan model.ClientMessage) {
+func ReaderClient(conn *websocket.Conn, game *model.Game, message chan model.ClientMessage, done chan struct{}) {
+	defer close(done)
 	for {
 		var clientMessage model.ClientMessage
 
@@ -35,11 +39,8 @@ func ReaderClient(conn *websocket.Conn, game *model.Game, message chan model.Cli
 				log.Printf("error: %v", err)
 			}
 			fmt.Println("Error reading player message :", err.Error())
-			break
+			return
 		}
-
-		fmt.Printf("Move player : %s\n\n", strings.Join(clientMessage.Move, ""))
-
 		message <- clientMessage
 	}
 }

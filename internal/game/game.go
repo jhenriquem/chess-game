@@ -1,37 +1,35 @@
 package game
 
 import (
-	"chess-game/internal/model"
 	"chess-game/internal/net"
-	"chess-game/internal/pkg/format"
 	"chess-game/internal/protocol"
+	"chess-game/model"
+	"chess-game/pkg/format"
+	"fmt"
 )
 
 func Run(game *model.Game) {
+	fmt.Println("Game RUN")
+	// White Player message
 	protocol.SendMessage(game.Turn.Client, "INIT", "📌 You are playing, you are white ⬜. \n🟢 It's your turn  ", true, format.ToFormatGame(game, game.Turn))
-	for _, p := range game.Players {
-		if p.Color != game.Turn.Color {
-			msg := "📌 You are playing, you are black ⬛"
 
-			protocol.SendMessage(p.Client, "INIT", msg, false, format.ToFormatGame(game, p))
-		}
-	}
+	// Black Player message
+	msg := "📌 You are playing, you are black ⬛"
+	protocol.SendMessage(game.GetPlayer("B").Client, "INIT", msg, false, format.ToFormatGame(game, game.GetPlayer("B")))
 
 	for {
 		select {
 		case player := <-game.Desconnect:
 			msg := "⚠️ Outher player desconnected \n ✨ You win"
-			if player.Color == "black" {
-				outherPlayer := GetPlayer(game, "white")
-				protocol.SendMessage(outherPlayer.Client, "DESCONNECTED", msg, false, format.ToFormatGame(game, outherPlayer))
-				net.CloseConnection(outherPlayer.Client)
-			} else {
-				outherPlayer := GetPlayer(game, "black")
-				protocol.SendMessage(outherPlayer.Client, "DESCONNECTED", msg, false, format.ToFormatGame(game, outherPlayer))
-				net.CloseConnection(outherPlayer.Client)
+
+			for _, p := range game.Players {
+				if p.Client != player.Client {
+					protocol.SendMessage(p.Client, "DESCONNECTED", msg, false, format.ToFormatGame(game, p))
+					net.CloseConnection(p.Client)
+				}
 			}
 
-			break
+			return
 		}
 	}
 }

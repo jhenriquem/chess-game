@@ -1,22 +1,22 @@
 package game
 
 import (
-	"chess-game/internal/model"
+	"chess-game/model"
 
 	"github.com/corentings/chess/v2"
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 )
 
-var base []*model.Game = []*model.Game{}
-
 func New(p1, p2 *websocket.Conn) *model.Game {
 	var game model.Game = model.Game{
 		ID: uuid.NewString(),
 
-		Board:   [8][8]string{},
-		Players: [2]*model.Player{newPlayer(p1, "white"), newPlayer(p2, "black")},
-		Timer:   "10min",
+		Board: NewEmptyBoard(),
+
+		Players: [2]*model.Player{newPlayer(p1, "W"), newPlayer(p2, "B")},
+
+		Timer: "10min",
 
 		Chess: chess.NewGame(),
 
@@ -24,17 +24,12 @@ func New(p1, p2 *websocket.Conn) *model.Game {
 		Moves:      [][2]string{{}},
 	}
 
-	base = append(base, &game)
-
 	// Sets the white player as the first to play
-	game.Turn = GetPlayer(&game, "white")
+	game.Turn = game.GetPlayer("W")
 
 	// Sets games pointers for players
-	GetPlayer(&game, "white").Game = &game
-	GetPlayer(&game, "black").Game = &game
-
-	// Generates the board linked to the players
-	SetupBoard(&game)
+	game.GetPlayer("W").Game = &game
+	game.GetPlayer("B").Game = &game
 
 	return &game
 }

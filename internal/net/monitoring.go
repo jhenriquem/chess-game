@@ -2,28 +2,21 @@ package net
 
 import (
 	"chess-game/internal/logic"
-	"chess-game/internal/model"
-	"chess-game/internal/pkg/format"
 	"chess-game/internal/protocol"
+	"chess-game/model"
+	"chess-game/pkg/format"
 	"fmt"
 
 	"github.com/gorilla/websocket"
 )
 
-func MonitoringClient(conn *websocket.Conn, game *model.Game) chan struct{} {
-	done := make(chan struct{})
-
-	defer func() {
-		close(done)
-		return
-	}()
-
+func MonitoringClient(conn *websocket.Conn, game *model.Game, done chan struct{}) {
 	SetPongHandler(conn)
 	go StartPinger(conn, done)
 
 	message := make(chan model.ClientMessage)
 
-	go ReaderClient(conn, game, message)
+	go ReaderClient(conn, game, message, done)
 
 	for {
 		select {
@@ -41,6 +34,8 @@ func MonitoringClient(conn *websocket.Conn, game *model.Game) chan struct{} {
 					}
 				}
 			}
+		case <-done:
+			return
 		}
 	}
 }

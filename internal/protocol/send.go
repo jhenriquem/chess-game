@@ -1,7 +1,7 @@
 package protocol
 
 import (
-	"chess-game/internal/model"
+	"chess-game/model"
 	"fmt"
 
 	"github.com/gorilla/websocket"

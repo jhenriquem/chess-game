@@ -12,8 +12,12 @@ type Protogame struct {
 
 	Moves [][2]string
 
-	MoveResult string
-	Player     Protoplayer
+	Outcome       string
+	GameString    string
+	OutcomeMethod string
+	MoveResult    string
+
+	Player Protoplayer
 
 	Timer string
 

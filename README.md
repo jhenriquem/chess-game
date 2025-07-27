@@ -21,8 +21,6 @@
 - 🔧 Validar jogadas no servidor
 - 🔧 Melhorar a logica de troca de mensagens e tipos de mensagens 
 
->[!NOTE]
-> Há algum bug na conexão entre servidor e client. Algumas vezes o servidor alega timeout por parte do client 
 
 #### 🧠  Etapas Futuras
 

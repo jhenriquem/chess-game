@@ -1,6 +1,6 @@
 package protocol
 
-import "chess-game/internal/model"
+import "chess-game/model"
 
 type Message struct {
 	TypeInfo string // INIT, DESCONNECTED, TIMEOUT, TURN, WAIT, PLAYER_FOUND

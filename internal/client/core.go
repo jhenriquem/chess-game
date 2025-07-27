@@ -1,11 +1,11 @@
 package client
 
 import (
-	"chess-game/internal/model"
 	"chess-game/internal/net"
-	"chess-game/internal/pkg/utils"
 	"chess-game/internal/protocol"
 	"chess-game/internal/ui"
+	"chess-game/model"
+	"chess-game/pkg/utils"
 	"fmt"
 	"log"
 	"os"
@@ -53,7 +53,7 @@ func Run(url string) {
 					inGame = true
 				}
 			case <-done:
-				break
+				return
 			}
 		}
 	}()
@@ -62,10 +62,8 @@ func Run(url string) {
 
 	select {
 	case <-interrupt:
-		log.Println("Interrompido. Encerrando conexão.")
 		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	case <-done:
 		log.Println("Conexão encerrada pelo servidor.")
-
 	}
 }

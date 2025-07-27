@@ -26,16 +26,17 @@ type Game struct {
 type Player struct {
 	Game          *Game
 	Client        *websocket.Conn
-	Color         string
+	Color         string // B or W
 	TimeRemaining string
 	Moves         []string
 	Score         int
 }
 
-type Pieces struct {
-	Piece    string
-	Location string
-	Color    string
-	Player   *Player
-	Icon     string
+func (g *Game) GetPlayer(color string) *Player {
+	for _, player := range g.Players {
+		if player.Color == color {
+			return player
+		}
+	}
+	return nil
 }

@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"chess-game/internal/model"
+	"chess-game/model"
 	"fmt"
 	"strings"
 
@@ -12,18 +12,20 @@ func MovesLogic(msg model.ClientMessage, game *model.Game) (string, error) {
 	if msg.Type == "move" {
 		move := strings.Join(msg.Move, "")
 
-		if mv, isValid := validMove(move, game); isValid {
-			addMove(mv, game)
-			UpdateBoard(game)
-
-			ChangeTurn(game)
-
-			result := CheckActionOfMoves(game)
-
-			return result, nil
-		} else {
-			return "", fmt.Errorf("Invalid move or error: %s", mv)
+		mv, err := ValidMove(move, game)
+		if err != nil {
+			return "", err
 		}
+
+		AddMove(mv, game)
+
+		game.Board = UpdateBoard(game.Chess.Position().Board().String())
+
+		ChangeTurn(game)
+
+		result := VerifyResultsOfMoves(game.Chess.String())
+
+		return result, nil
 	}
 	return "", nil
 }
@@ -36,7 +38,7 @@ func ChangeTurn(game *model.Game) {
 	}
 }
 
-func addMove(move string, game *model.Game) {
+func AddMove(move string, game *model.Game) {
 	if len(game.Moves) == 0 {
 		game.Moves = append(game.Moves, [2]string{})
 	}
@@ -48,16 +50,17 @@ func addMove(move string, game *model.Game) {
 	}
 }
 
-func validMove(move string, game *model.Game) (string, bool) {
+func ValidMove(move string, game *model.Game) (string, error) {
 	validMoves := game.Chess.Position().ValidMoves()
 
 	for _, m := range validMoves {
 		if m.String() == move {
 			if err := game.Chess.PushNotationMove(m.String(), chess.UCINotation{}, nil); err != nil {
-				return err.Error(), false
+				return "", err
 			}
-			return m.String(), true
+			return m.String(), nil
 		}
 	}
-	return move, false
+
+	return "", fmt.Errorf("Invalid move")
 }

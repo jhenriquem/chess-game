@@ -1,11 +1,10 @@
 package game
 
 import (
-	"chess-game/internal/model"
-	"chess-game/internal/pkg/pieces"
+	"chess-game/pkg/pieces"
 )
 
-func SetupBoard(game *model.Game) {
+func NewEmptyBoard() [8][8]string {
 	var board [8][8]string = [8][8]string{{}}
 
 	for col, piece := range pieces.Major {
@@ -22,5 +21,5 @@ func SetupBoard(game *model.Game) {
 		}
 	}
 
-	game.Board = board
+	return board
 }

@@ -2,7 +2,7 @@ package net
 
 import (
 	"bufio"
-	"chess-game/internal/model"
+	"chess-game/model"
 	"log"
 	"os"
 
@@ -15,7 +15,7 @@ func ClientInputLoop(conn *websocket.Conn, done <-chan struct{}) {
 	for {
 		select {
 		case <-done:
-			break // encerra quando a conexão é finalizada
+			return
 		default:
 			if !scanner.Scan() {
 				log.Println("Entrada encerrada.")

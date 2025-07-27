@@ -1,7 +1,7 @@
 package format
 
 import (
-	"chess-game/internal/model"
+	"chess-game/model"
 )
 
 func ToFormatPlayer(p *model.Player) model.Protoplayer {

@@ -1,21 +1,21 @@
 package logic
 
 import (
-	"chess-game/internal/model"
-	"chess-game/internal/pkg/pieces"
-	"fmt"
+	"chess-game/pkg/pieces"
 	"strconv"
 	"strings"
 	"unicode"
 )
 
-func returnPiece(piece rune) string {
+func ReturnPiece(piece rune) string {
 	color := "W"
+
 	if unicode.IsLower(piece) {
 		color = "B"
 	}
 
 	pieceName := ""
+
 	switch strings.ToLower(string(piece)) {
 	case "r":
 		pieceName = "rook"
@@ -32,33 +32,30 @@ func returnPiece(piece rune) string {
 	default:
 		return " "
 	}
+
 	return pieces.Icons[color+pieceName]
 }
 
-func UpdateBoard(game *model.Game) {
-	fmt.Println(game.Chess.Position().Board())
-
-	FormatFEN(game)
-}
-
-func FormatFEN(game *model.Game) {
+func UpdateBoard(FEN string) [8][8]string {
 	// rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR
-	FEN := game.Chess.Position().Board().String()
 
+	board := [8][8]string{}
 	sliceFEN := strings.Split(FEN, "/")
 	for l, line := range sliceFEN {
-		colomnAmount := 0
+		colomn := 0
 
 		for _, piece := range line {
 			if value, err := strconv.Atoi(string(piece)); err == nil {
 				for i := 0; i < value; i++ {
-					game.Board[l][colomnAmount] = " "
-					colomnAmount++
+					board[l][colomn] = " "
+					colomn++
 				}
 			} else {
-				game.Board[l][colomnAmount] = returnPiece(piece)
-				colomnAmount++
+				board[l][colomn] = ReturnPiece(piece)
+				colomn++
 			}
 		}
 	}
+
+	return board
 }

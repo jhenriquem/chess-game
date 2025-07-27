@@ -1,8 +1,8 @@
 package server
 
 import (
-	"chess-game/internal/model"
 	"chess-game/internal/protocol"
+	"chess-game/model"
 	"time"
 
 	"github.com/gorilla/websocket"
