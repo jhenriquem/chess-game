@@ -1,21 +1,20 @@
 package game
 
 import (
-	"chess-game/internal/net"
 	"chess-game/internal/protocol"
 	"chess-game/model"
 	"chess-game/pkg/format"
-	"fmt"
+
+	"github.com/gorilla/websocket"
 )
 
-func Run(game *model.Game) {
-	fmt.Println("Game RUN")
+func StartGame(game *model.Game) {
 	// White Player message
-	protocol.SendMessage(game.Turn.Client, "INIT", "📌 You are playing, you are white ⬜. \n🟢 It's your turn  ", true, format.ToFormatGame(game, game.Turn))
+	protocol.SendMessage(game.CurrentPlayer.Client, "INIT", "📌 You are playing, you are white ⬜. \n🟢 It's your turn  ", true, format.Game(game))
 
 	// Black Player message
 	msg := "📌 You are playing, you are black ⬛"
-	protocol.SendMessage(game.GetPlayer("B").Client, "INIT", msg, false, format.ToFormatGame(game, game.GetPlayer("B")))
+	protocol.SendMessage(game.GetPlayer("B").Client, "INIT", msg, false, format.Game(game))
 
 	for {
 		select {
@@ -24,8 +23,10 @@ func Run(game *model.Game) {
 
 			for _, p := range game.Players {
 				if p.Client != player.Client {
-					protocol.SendMessage(p.Client, "DESCONNECTED", msg, false, format.ToFormatGame(game, p))
-					net.CloseConnection(p.Client)
+					protocol.SendMessage(p.Client, "DESCONNECTED", msg, false, format.Game(game))
+					p.Client.WriteMessage(websocket.CloseMessage, []byte{})
+					p.Client.Close()
+
 				}
 			}
 

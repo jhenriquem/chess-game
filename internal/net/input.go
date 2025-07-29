@@ -22,17 +22,11 @@ func ClientInputLoop(conn *websocket.Conn, done <-chan struct{}) {
 				return
 			}
 
-			text := scanner.Text()
-
-			moves := []string{}
-
-			for _, char := range text {
-				moves = append(moves, string(char))
-			}
+			move := scanner.Text()
 
 			msg := model.ClientMessage{
-				Type: "move",
-				Move: moves,
+				Type: "MOVE",
+				Move: move,
 			}
 
 			if err := conn.WriteJSON(msg); err != nil {

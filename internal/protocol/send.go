@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func SendMessage(conn *websocket.Conn, typeInfo, info string, turn bool, game model.Protogame) error {
+func SendMessage(conn *websocket.Conn, typeInfo, info string, turn bool, game model.GameFormat) error {
 	body := Message{
 		TypeInfo: typeInfo,
 		Info:     info,

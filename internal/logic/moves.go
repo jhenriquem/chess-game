@@ -3,39 +3,23 @@ package logic
 import (
 	"chess-game/model"
 	"fmt"
-	"strings"
 
 	"github.com/corentings/chess/v2"
 )
 
-func MovesLogic(msg model.ClientMessage, game *model.Game) (string, error) {
-	if msg.Type == "move" {
-		move := strings.Join(msg.Move, "")
+func Moves(msg model.ClientMessage, game *model.Game) error {
+	move := msg.Move
 
-		mv, err := ValidMove(move, game)
-		if err != nil {
-			return "", err
-		}
-
-		AddMove(mv, game)
-
-		game.Board = UpdateBoard(game.Chess.Position().Board().String())
-
-		ChangeTurn(game)
-
-		result := VerifyResultsOfMoves(game.Chess.String())
-
-		return result, nil
+	mv, err := ValidMove(move, game)
+	if err != nil {
+		return err
 	}
-	return "", nil
-}
 
-func ChangeTurn(game *model.Game) {
-	if game.Chess.Position().Turn() == 1 {
-		game.Turn = game.Players[0]
-	} else if game.Chess.Position().Turn() == 2 {
-		game.Turn = game.Players[1]
-	}
+	AddMove(mv, game)
+
+	VerifyResultsOfMoves(game)
+
+	return nil
 }
 
 func AddMove(move string, game *model.Game) {

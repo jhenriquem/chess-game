@@ -2,10 +2,11 @@ package ui
 
 import (
 	"chess-game/internal/protocol"
+	"chess-game/model"
 	"fmt"
 )
 
-func Load(data protocol.Message) {
+func Load(data protocol.Message, player *model.PlayerFormat) {
 	ClearScreen()
 
 	if data.Info != "" {
@@ -13,10 +14,16 @@ func Load(data protocol.Message) {
 	}
 
 	if data.Game.Turn != "" {
-		Board(data.Game.Board, data.Game.Player.Color)
+		Board(data.Game.Board, player.Color)
 	}
 
-	fmt.Println(data.Game.MoveResult)
+	if data.Game.IsCheck {
+		fmt.Println("Is check")
+	}
+
+	if data.Game.IsMate {
+		fmt.Println("Checkmate")
+	}
 
 	if data.IsTurn {
 		fmt.Print("\n 🔵 What's your move ? [initial][final] :")

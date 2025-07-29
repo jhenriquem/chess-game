@@ -6,6 +6,15 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+func FindPlayerByConn(conn *websocket.Conn, game *model.Game) *model.Player {
+	for _, player := range game.Players {
+		if player.Client == conn {
+			return player
+		}
+	}
+	return nil
+}
+
 func newPlayer(client *websocket.Conn, color string) *model.Player {
 	return &model.Player{
 		Client: client,

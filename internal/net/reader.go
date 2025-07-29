@@ -1,6 +1,7 @@
 package net
 
 import (
+	g "chess-game/internal/game"
 	"chess-game/internal/protocol"
 	"chess-game/model"
 	"fmt"
@@ -29,7 +30,6 @@ func ReaderServer(conn *websocket.Conn, done chan struct{}, message chan protoco
 }
 
 func ReaderClient(conn *websocket.Conn, game *model.Game, message chan model.ClientMessage, done chan struct{}) {
-	defer close(done)
 	for {
 		var clientMessage model.ClientMessage
 
@@ -39,8 +39,11 @@ func ReaderClient(conn *websocket.Conn, game *model.Game, message chan model.Cli
 				log.Printf("error: %v", err)
 			}
 			fmt.Println("Error reading player message :", err.Error())
+			close(done)
 			return
 		}
+
+		clientMessage.Player = g.FindPlayerByConn(conn, game)
 		message <- clientMessage
 	}
 }

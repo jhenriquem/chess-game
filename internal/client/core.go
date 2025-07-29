@@ -16,7 +16,7 @@ import (
 
 var (
 	inGame = false
-	Player = model.Protoplayer{}
+	Player = model.PlayerFormat{}
 )
 
 func Run(url string) {
@@ -46,7 +46,20 @@ func Run(url string) {
 		for {
 			select {
 			case data := <-channel:
-				ui.Load(data)
+				if data.TypeInfo == "INIT" && data.IsTurn {
+					Player = data.Game.Players[0]
+				} else if data.TypeInfo == "INIT" && !data.IsTurn {
+					Player = data.Game.Players[1]
+				}
+
+				// Constant update of the Player
+				for _, player := range data.Game.Players {
+					if Player.Color == player.Color {
+						Player = player
+					}
+				}
+
+				ui.Load(data, &Player)
 
 				if !inGame {
 					net.SetPingHandler(conn) // Ativa o monitoramento de ping

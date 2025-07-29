@@ -39,7 +39,7 @@ func inverterBoard(arr [8][8]string) [8][8]string {
 func Board(gameBoard [8][8]string, color string) {
 	board := gameBoard
 
-	if color == "black" {
+	if color == "B" {
 		board = inverterBoard(board)
 	}
 
@@ -47,7 +47,7 @@ func Board(gameBoard [8][8]string, color string) {
 
 	for i, row := range board {
 		lineNumber := 8 - i
-		if color == "black" {
+		if color == "B" {
 			lineNumber = i + 1
 		}
 		fmt.Printf("  %d  │", lineNumber)
@@ -69,7 +69,7 @@ func Board(gameBoard [8][8]string, color string) {
 	}
 
 	fmt.Println("     └─────┴─────┴─────┴─────┴─────┴─────┴─────┴─────┘")
-	if color == "black" {
+	if color == "B" {
 		fmt.Println("        h     g     f     e     d     c     b     a")
 	} else {
 		fmt.Println("        a     b     c     d     e     f     g     h")

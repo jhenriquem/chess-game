@@ -1,6 +1,7 @@
 package model
 
 type ClientMessage struct {
-	Type string // move, draw, giveUp
-	Move []string
+	Type   string // MOVE, DRAW, RESING
+	Move   string
+	Player *Player
 }

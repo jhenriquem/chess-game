@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"chess-game/model"
 	"strings"
 )
 
@@ -20,15 +21,11 @@ func IsMate(result rune) bool {
 	return false
 }
 
-func VerifyResultsOfMoves(gameString string) string {
+func VerifyResultsOfMoves(game *model.Game) {
+	gameString := game.Chess.String()
 	str := strings.ReplaceAll(gameString, " ", "")
 	resultRune := rune(str[len(str)-2])
 
-	if check := IsCheck(resultRune); check {
-		return "Is check"
-	} else if mate := IsMate(resultRune); mate {
-		return "Is checkmate"
-	}
-
-	return ""
+	game.IsCheck = IsCheck(resultRune)
+	game.IsMate = IsMate(resultRune)
 }
