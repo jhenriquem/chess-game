@@ -17,6 +17,6 @@ func main() {
 
 	addr := server.Run()
 
-	fmt.Printf("Server online -> %s", *addr)
+	fmt.Printf("Server online -> %s\n ", *addr)
 	log.Fatal(http.ListenAndServe(*addr, nil))
 }

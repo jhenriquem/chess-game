@@ -25,7 +25,7 @@ func HandleConnection(conn *websocket.Conn) {
 		if waitingConn == conn {
 			waitingConn = nil
 
-			protocol.SendMessage(conn, "TIMEOUT", "❌ Waiting time is over. Please try again later.", false, model.GameFormat{})
+			protocol.SendMessage(conn, "WAIT_TIMEOUT", "❌ Waiting time is over. Please try again later.", false, model.GameFormat{})
 			conn.WriteMessage(websocket.CloseMessage, []byte{})
 			conn.Close()
 		}

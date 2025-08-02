@@ -20,7 +20,7 @@ func ReaderServer(conn *websocket.Conn, done chan struct{}, message chan protoco
 				log.Printf("error: %v", err)
 			}
 
-			log.Println("Erro ao ler mensagem:", err)
+			// log.Println("Erro ao ler mensagem:", err)
 			close(done)
 			break
 		}

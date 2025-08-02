@@ -26,5 +26,7 @@ func HandleMatch(p1, p2 *websocket.Conn) {
 		}(player)
 	}
 
-	g.StartGame(game)
+	g.Start(game)
+
+	handler.HandleClientExit(game)
 }

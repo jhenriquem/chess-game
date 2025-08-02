@@ -21,6 +21,8 @@ func Load(data protocol.Message, player *model.PlayerFormat) {
 		fmt.Println("Is check")
 	}
 
+	fmt.Println(player.TimeLeft)
+
 	if data.Game.IsMate {
 		fmt.Println("Checkmate")
 	}

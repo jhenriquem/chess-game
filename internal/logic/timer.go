@@ -2,11 +2,12 @@ package logic
 
 import (
 	"chess-game/model"
+	"fmt"
 	"time"
 )
 
-func StartClock(p *model.Player) {
-	p.StopChan = make(chan struct{})
+func StartClock(g *model.Game) {
+	g.CurrentPlayer.StopChan = make(chan struct{})
 	go func() {
 		ticker := time.NewTicker(1 * time.Second)
 		defer ticker.Stop()
@@ -14,13 +15,16 @@ func StartClock(p *model.Player) {
 		for {
 			select {
 			case <-ticker.C:
-				p.TimeLeft -= 1 * time.Second
-				if p.TimeLeft <= 0 {
-					p.TimeLeft = 0
-					p.Game.Desconnect <- p
+				g.CurrentPlayer.TimeLeft -= 1 * time.Second
+
+				fmt.Printf("\n Timer clock of player (%s) : %v", g.CurrentPlayer.Color, g.CurrentPlayer.TimeLeft)
+
+				if g.CurrentPlayer.TimeLeft <= 0 {
+					g.CurrentPlayer.TimeLeft = 0
+					g.CurrentPlayer.Game.Timeout <- g.CurrentPlayer
 					return
 				}
-			case <-p.StopChan:
+			case <-g.CurrentPlayer.StopChan:
 				return
 			}
 		}

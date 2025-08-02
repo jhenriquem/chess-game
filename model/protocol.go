@@ -1,8 +1,10 @@
 package model
 
+import "time"
+
 type PlayerFormat struct {
-	Color    string  // W or B
-	TimeLeft float64 `json:"time_left"`
+	Color    string // W or B
+	TimeLeft time.Duration
 	Moves    []string
 	Score    int
 }

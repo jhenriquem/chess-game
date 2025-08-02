@@ -8,7 +8,7 @@ func FormatPlayer(p *model.Player) model.PlayerFormat {
 	return model.PlayerFormat{
 		Color:    p.Color,
 		Moves:    p.Moves,
-		TimeLeft: p.TimeLeft.Minutes(),
+		TimeLeft: p.TimeLeft,
 		Score:    p.Score,
 	}
 }

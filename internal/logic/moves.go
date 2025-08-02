@@ -38,6 +38,7 @@ func ValidMove(move string, game *model.Game) (string, error) {
 	validMoves := game.Chess.Position().ValidMoves()
 
 	for _, m := range validMoves {
+		fmt.Print(m.String() + "´ ")
 		if m.String() == move {
 			if err := game.Chess.PushNotationMove(m.String(), chess.UCINotation{}, nil); err != nil {
 				return "", err

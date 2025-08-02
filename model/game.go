@@ -12,13 +12,13 @@ type Game struct {
 	Chess *chess.Game
 
 	Desconnect chan *Player
+	Timeout    chan *Player
 
 	IsCheck bool
 	IsMate  bool
 
 	MoveResult string
 	Moves      [][2]string
-	MoveChan   chan string
 
 	Players [2]*Player
 
@@ -38,6 +38,16 @@ type Player struct {
 
 	Moves []string
 	Score int
+}
+
+// Return the player other than the current one
+func (g *Game) GetAnoutherPlayer() *Player {
+	for _, player := range g.Players {
+		if player.Color != g.CurrentPlayer.Color {
+			return player
+		}
+	}
+	return nil
 }
 
 func (g *Game) GetPlayer(color string) *Player {

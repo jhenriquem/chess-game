@@ -33,7 +33,8 @@ func Run(url string) {
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
-	defer conn.Close()
+
+	// defer conn.Close()
 
 	done := make(chan struct{})
 	interrupt := make(chan os.Signal, 1)
