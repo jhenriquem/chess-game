@@ -14,20 +14,20 @@
 - [x] Implementar monitoramento de conexão com `ping/pong`
 - [x] Encerrar a partida ao detectar desconexão
 - [x] Estrutura basica do client
+- [x] Tratando do envio de jogadas pelo player
+- [x] Definir representação do tabuleiro de xadrez
+- [x] Validar jogadas no servidor
+- [x] Melhorar a logica de troca de mensagens e tipos de mensagens 
 
 #### 📍 Atualmente 
-- 🔧 Tratando do envio de jogadas pelo player
-- 🔧 Definir representação do tabuleiro de xadrez
-- 🔧 Validar jogadas no servidor
-- 🔧 Melhorar a logica de troca de mensagens e tipos de mensagens 
-
-
-#### 🧠  Etapas Futuras
 
 - [ ] Implementar controle de turno e regras de movimento
-- [ ] Detectar xeque, xeque-mate e empate
 - [ ] Implementar cronômetro por jogador (ex: 10 minutos)
+- [ ] Detectar xeque, xeque-mate e empate
 - [ ] Finalizar partida quando o tempo de um jogador acabar
+
+#### 🧠  Etapas Futuras
+- [ ] Melhorar a representação do tabulerio no client side
 
 ## 📁 Estrutura do Projeto
 
