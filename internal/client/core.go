@@ -5,7 +5,6 @@ import (
 	"chess-game/internal/protocol"
 	"chess-game/internal/ui"
 	"chess-game/model"
-	"chess-game/pkg/utils"
 	"fmt"
 	"log"
 	"os"
@@ -14,17 +13,16 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var (
-	inGame = false
-	Player = model.PlayerFormat{}
-)
-
 func Run(url string) {
-	utils.Introdution()
-	continueGame := utils.QuestionGame()
-	if !continueGame {
-		fmt.Println("👋 Bye")
-		return
+	player := model.PlayerFormat{}
+
+	for {
+		ui.ClearScreen()
+		player.Name = AskName()
+		if player.Name != "" {
+			break
+		}
+		fmt.Println("Nome inválido")
 	}
 
 	ui.ClearScreen()
@@ -33,51 +31,58 @@ func Run(url string) {
 	if err != nil {
 		log.Fatal("Erro ao conectar:", err)
 	}
+	defer conn.Close()
 
-	// defer conn.Close()
+	fmt.Println(" Conectado. Aguardando oponente...")
 
+	inGame := false
 	done := make(chan struct{})
 	interrupt := make(chan os.Signal, 1)
 	channel := make(chan protocol.Message)
 
 	signal.Notify(interrupt, os.Interrupt)
 
+	// Recebe mensagens do servidor
 	go net.ReaderServer(conn, done, channel)
+
 	go func() {
 		for {
 			select {
 			case data := <-channel:
-				if data.TypeInfo == "INIT" && data.IsTurn {
-					Player = data.Game.Players[0]
-				} else if data.TypeInfo == "INIT" && !data.IsTurn {
-					Player = data.Game.Players[1]
+				if data.TypeInfo == "INIT" {
+					idx := 1
+					if data.IsTurn {
+						idx = 0
+					}
+					player = data.Game.Players[idx]
 				}
 
-				// Constant update of the Player
-				for _, player := range data.Game.Players {
-					if Player.Color == player.Color {
-						Player = player
+				for _, p := range data.Game.Players {
+					if player.Color == p.Color {
+						player = p
 					}
 				}
 
-				ui.Load(data, &Player)
+				ui.Load(data, &player)
 
 				if !inGame {
-					net.SetPingHandler(conn) // Ativa o monitoramento de ping
+					net.SetPingHandler(conn)
 					inGame = true
 				}
+
 			case <-done:
+				fmt.Println("Conexão encerrada pelo servidor.")
 				return
 			}
 		}
 	}()
 
+	// Lê entradas do usuário (jogadas)
 	go net.ClientInputLoop(conn, done)
 
 	select {
 	case <-interrupt:
-		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+		conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, "Encerrado pelo cliente"))
 	case <-done:
-		log.Println("Conexão encerrada pelo servidor.")
 	}
 }

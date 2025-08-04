@@ -10,6 +10,7 @@ func FormatPlayer(p *model.Player) model.PlayerFormat {
 		Moves:    p.Moves,
 		TimeLeft: p.TimeLeft,
 		Score:    p.Score,
+		Name:     p.Name,
 	}
 }
 

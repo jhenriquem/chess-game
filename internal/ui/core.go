@@ -9,22 +9,12 @@ import (
 func Load(data protocol.Message, player *model.PlayerFormat) {
 	ClearScreen()
 
-	if data.Info != "" {
-		fmt.Printf("\n %s \n ", data.Info)
-	}
+	// Adicionar o tempo e os nomes dos jogadores
+	// Adicionar campos para o ultimo movimento e indicação de turno
+	// Melhorar a logica de input de movimentos( bobbletea, net )
 
 	if data.Game.Turn != "" {
 		Board(data.Game.Board, player.Color)
-	}
-
-	if data.Game.IsCheck {
-		fmt.Println("Is check")
-	}
-
-	fmt.Println(player.TimeLeft)
-
-	if data.Game.IsMate {
-		fmt.Println("Checkmate")
 	}
 
 	if data.IsTurn {

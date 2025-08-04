@@ -1,21 +1,20 @@
 package game
 
 import (
-	"chess-game/pkg/pieces"
 	"strconv"
 	"strings"
-	"unicode"
 )
 
 func NewEmptyBoard() [8][8]string {
 	var board [8][8]string = [8][8]string{{}}
 
-	for col, piece := range pieces.Major {
-		board[0][col] = pieces.Icons["B"+piece]
-		board[1][col] = pieces.Icons["Bpawn"]
+	piecesMajor := []string{"r", "n", "b", "q", "k", "b", "n", "r"}
+	for col, piece := range piecesMajor {
+		board[0][col] = piece
+		board[1][col] = "p"
 
-		board[6][col] = pieces.Icons["Wpawn"]
-		board[7][col] = pieces.Icons["W"+piece]
+		board[6][col] = "P"
+		board[7][col] = strings.ToUpper(piece)
 	}
 
 	for row := 2; row <= 5; row++ {
@@ -25,35 +24,6 @@ func NewEmptyBoard() [8][8]string {
 	}
 
 	return board
-}
-
-func returnPiece(piece rune) string {
-	color := "W"
-
-	if unicode.IsLower(piece) {
-		color = "B"
-	}
-
-	pieceName := ""
-
-	switch strings.ToLower(string(piece)) {
-	case "r":
-		pieceName = "rook"
-	case "n":
-		pieceName = "knight"
-	case "b":
-		pieceName = "bishop"
-	case "k":
-		pieceName = "king"
-	case "q":
-		pieceName = "queen"
-	case "p":
-		pieceName = "pawn"
-	default:
-		return " "
-	}
-
-	return pieces.Icons[color+pieceName]
 }
 
 func UpdateBoard(FEN string) [8][8]string {
@@ -71,7 +41,7 @@ func UpdateBoard(FEN string) [8][8]string {
 					colomn++
 				}
 			} else {
-				board[l][colomn] = returnPiece(piece)
+				board[l][colomn] = string(piece)
 				colomn++
 			}
 		}

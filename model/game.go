@@ -29,6 +29,7 @@ type Game struct {
 
 type Player struct {
 	Game   *Game
+	Name   string
 	Client *websocket.Conn
 	Color  string // B or W
 

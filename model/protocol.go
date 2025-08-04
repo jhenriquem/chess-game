@@ -7,6 +7,7 @@ type PlayerFormat struct {
 	TimeLeft time.Duration
 	Moves    []string
 	Score    int
+	Name     string
 }
 
 type GameFormat struct {
