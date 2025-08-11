@@ -8,6 +8,12 @@ import (
 	"github.com/corentings/chess/v2"
 )
 
+type PlayerFormat struct {
+	Name     string
+	Color    chess.Color
+	Timeleft time.Duration
+}
+
 type Player struct {
 	Conn     net.Conn
 	Encoder  *json.Encoder

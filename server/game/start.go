@@ -27,12 +27,22 @@ func Start(p1, p2 *model.Player) {
 	}
 
 	// Send initial info
-	for _, p := range game.Players {
+	for i, p := range game.Players {
 		p.Timeleft = 15 * time.Minute
 		msg := model.Message{
 			Type: "START",
 			Data: model.Data{
-				FEN:     "",
+				Player: model.PlayerFormat{
+					Color:    p.Color,
+					Name:     p.Name,
+					Timeleft: p.Timeleft,
+				},
+				Oponnent: model.PlayerFormat{
+					Color:    game.Players[1-i].Color,
+					Name:     game.Players[1-i].Name,
+					Timeleft: game.Players[1-i].Timeleft,
+				},
+				FEN:     game.Chess.Position().Board().String(),
 				Message: fmt.Sprintf("You are %s", ColorName(p.Color)),
 			},
 		}

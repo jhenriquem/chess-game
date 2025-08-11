@@ -2,9 +2,10 @@ package game
 
 import (
 	"chess-game/model"
-	"fmt"
 	"log"
 	"time"
+
+	"github.com/corentings/chess/v2"
 )
 
 var timeChan chan struct{}
@@ -21,12 +22,23 @@ func Run(game *model.Game) {
 
 		currentPlayer := game.Players[turn]
 		oponnent := game.Players[1-turn]
+		oponnent.Encoder.Encode(model.Message{Type: "WAIT", Data: model.Data{Message: "Waiting your opponent move"}})
 
 		msg := model.Message{
 			Type: "TURN",
 			Data: model.Data{
+				Player: model.PlayerFormat{
+					Color:    currentPlayer.Color,
+					Name:     currentPlayer.Name,
+					Timeleft: currentPlayer.Timeleft,
+				},
+				Oponnent: model.PlayerFormat{
+					Color:    oponnent.Color,
+					Timeleft: oponnent.Timeleft,
+					Name:     oponnent.Name,
+				},
 				FEN:     GameFEN,
-				Message: fmt.Sprintf("Is your turn"),
+				Message: "Is your turn",
 			},
 		}
 		currentPlayer.Encoder.Encode(msg)
@@ -37,8 +49,8 @@ func Run(game *model.Game) {
 
 		select {
 		case <-timeChan:
-			currentPlayer.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{FEN: GameFEN, Message: "Your time is up"}})
-			oponnent.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{FEN: GameFEN, Message: "Your opponent's time is up"}})
+			currentPlayer.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Your time is up"}})
+			oponnent.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Your opponent's time is up"}})
 
 			return
 		default:
@@ -49,14 +61,20 @@ func Run(game *model.Game) {
 			if err := currentPlayer.Decoder.Decode(&currPlayerMove); err != nil {
 				log.Printf("\nError reading player(%s) message (%s)", currentPlayer.Color, err.Error())
 
-				oponnent.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{FEN: "", Message: "Your opponent is desconnected"}})
+				oponnent.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Your opponent is desconnected"}})
 
 				return
-				// oponnent.Encoder.Encode()
 			}
 
 			// Validação de movimento
-			// Parar o cronometro
+			err := game.Chess.PushNotationMove(currPlayerMove.Data.Message, chess.UCINotation{}, nil)
+			if err != nil {
+				currentPlayer.Encoder.Encode(model.Message{Type: "TURN", Data: model.Data{Message: "Invalid Move"}})
+				continue
+			}
+
+			// Atualização do turno
+			turn = 1 - turn
 			// Atualizar os players (tabulerio, tempo)
 			// Trocar o player
 		}
