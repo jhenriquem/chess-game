@@ -5,6 +5,7 @@ type Data struct {
 	Player   PlayerFormat
 	Oponnent PlayerFormat
 	Message  string
+	LastMove string
 }
 
 type Message struct {

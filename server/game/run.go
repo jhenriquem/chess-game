@@ -2,6 +2,7 @@ package game
 
 import (
 	"chess-game/model"
+	"fmt"
 	"log"
 	"time"
 
@@ -22,7 +23,6 @@ func Run(game *model.Game) {
 
 		currentPlayer := game.Players[turn]
 		oponnent := game.Players[1-turn]
-		oponnent.Encoder.Encode(model.Message{Type: "WAIT", Data: model.Data{Message: "Waiting your opponent move"}})
 
 		msg := model.Message{
 			Type: "TURN",
@@ -37,10 +37,16 @@ func Run(game *model.Game) {
 					Timeleft: oponnent.Timeleft,
 					Name:     oponnent.Name,
 				},
-				FEN:     GameFEN,
-				Message: "Is your turn",
+				FEN:      GameFEN,
+				Message:  fmt.Sprintf("%s turn", ColorName(currentPlayer.Color)),
+				LastMove: ReturnLastMove(game),
 			},
 		}
+
+		oponnentMsg := msg
+		oponnentMsg.Type = "WAIT"
+		oponnent.Encoder.Encode(oponnentMsg)
+
 		currentPlayer.Encoder.Encode(msg)
 
 		// Start the timer
@@ -69,14 +75,11 @@ func Run(game *model.Game) {
 			// Validação de movimento
 			err := game.Chess.PushNotationMove(currPlayerMove.Data.Message, chess.UCINotation{}, nil)
 			if err != nil {
-				currentPlayer.Encoder.Encode(model.Message{Type: "TURN", Data: model.Data{Message: "Invalid Move"}})
+				currentPlayer.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Invalid Move"}})
 				continue
 			}
 
-			// Atualização do turno
 			turn = 1 - turn
-			// Atualizar os players (tabulerio, tempo)
-			// Trocar o player
 		}
 
 	}

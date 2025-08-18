@@ -8,13 +8,6 @@ import (
 	"github.com/corentings/chess/v2"
 )
 
-func ColorName(c chess.Color) string {
-	if c == chess.White {
-		return "White"
-	}
-	return "Black"
-}
-
 func Start(p1, p2 *model.Player) {
 	// Assign colors
 	p1.Color = chess.White
@@ -42,8 +35,9 @@ func Start(p1, p2 *model.Player) {
 					Name:     game.Players[1-i].Name,
 					Timeleft: game.Players[1-i].Timeleft,
 				},
-				FEN:     game.Chess.Position().Board().String(),
-				Message: fmt.Sprintf("You are %s", ColorName(p.Color)),
+				FEN:      game.Chess.Position().Board().String(),
+				Message:  fmt.Sprintf("You are %s", ColorName(p.Color)),
+				LastMove: ReturnLastMove(&game),
 			},
 		}
 		p.Encoder.Encode(msg)

@@ -1,15 +1,21 @@
 package main
 
 import (
+	"chess-game/client/net"
+	"chess-game/client/ui"
 	"chess-game/model"
-	"encoding/json"
 	"fmt"
 	"log"
-	"net"
 	"os"
+
+	"github.com/gdamore/tcell/v2"
 )
 
 func main() {
+	s := ui.InitScreen()
+
+	defer s.Fini()
+
 	if len(os.Args) < 2 {
 		fmt.Println("Uso: client <name>")
 		os.Exit(1)
@@ -17,33 +23,74 @@ func main() {
 
 	name := os.Args[1]
 
-	conn, err := net.Dial("tcp", "localhost:8000")
+	client, err := net.ConnectedServer(name)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Failed to connect to server (%s)", err.Error())
 	}
-	defer conn.Close()
 
-	enc := json.NewEncoder(conn)
-	dec := json.NewDecoder(conn)
+	defer client.Conn.Close()
 
-	msg := model.Message{
-		Type: "CONNECTED",
-		Data: model.Data{
-			FEN:     "",
-			Message: name,
-		},
-	}
-	enc.Encode(msg)
+	messageChan := make(chan model.Message)
+	eventChan := make(chan tcell.Event)
+	errChan := make(chan error)
 
+	go client.ReadServer(messageChan, errChan)
+	go PollEventLoop(s, eventChan)
+
+	GameLoop(client, s, messageChan, eventChan, errChan)
+}
+
+func PollEventLoop(s tcell.Screen, eventChan chan tcell.Event) {
 	for {
-		var m model.Message
-		if err := dec.Decode(&m); err != nil {
-			log.Printf("\nDisconnect or decode error (%s)", err.Error())
-			return
+		ev := s.PollEvent()
+		eventChan <- ev
+	}
+}
+
+func GameLoop(client *net.Client, s tcell.Screen, messageChan <-chan model.Message, eventChan <-chan tcell.Event, errChan <-chan error) {
+	running := true
+
+	input := ""
+
+	for running {
+		select {
+		case message := <-messageChan:
+
+			s.Clear()
+
+			if message.Data.FEN != "" {
+				ui.RenderBoard(message.Data.FEN)
+			}
+
+			ui.StatusBar(message.Data)
+
+		case err := <-errChan:
+			log.Printf("Erro de conexão: %s", err)
+			running = false
+
+		case ev := <-eventChan:
+			switch ev := ev.(type) {
+
+			case *tcell.EventResize:
+				s.Sync()
+
+			case *tcell.EventKey:
+				if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyCtrlC {
+					running = false
+					return
+
+				} else if ev.Key() == tcell.KeyEnter {
+
+					client.SendMove(input)
+					input = ""
+
+				} else {
+
+					input += string(ev.Rune())
+					ui.Input(input)
+
+				}
+			}
 		}
-
-		fmt.Printf("\n FEN : %s", m.Data.FEN)
-		fmt.Printf("\n Messsage : %s", m.Data.Message)
-
 	}
 }
