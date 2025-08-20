@@ -5,32 +5,65 @@ import (
 	"strings"
 	"unicode"
 
+	"github.com/corentings/chess/v2"
 	"github.com/gdamore/tcell/v2"
 )
 
 var (
-	lightSquare = tcell.NewRGBColor(240, 217, 181) // #f0d9b5
-	darkSquare  = tcell.NewRGBColor(181, 136, 99)  // #b58863
+	lightSquare = tcell.NewRGBColor(240, 217, 181)
+	darkSquare  = tcell.NewRGBColor(181, 136, 99)
 )
 
-func RenderBoard(fen string) {
+func InvesionBoard(ranks []string) []string {
+	var board []string = []string{"", "", "", "", "", "", "", ""}
+	start, end := 0, 7
+
+	for rankI, rank := range ranks {
+		line := ""
+		for charI := range rank {
+			line += string(rank[len(rank)-1-charI])
+		}
+		ranks[rankI] = line
+	}
+
+	for start < end {
+		board[start], board[end] = ranks[end], ranks[start]
+
+		start++
+		end--
+	}
+
+	return board
+}
+
+func RenderBoard(fen string, color chess.Color) {
 	light := tcell.StyleDefault.Background(lightSquare)
 	dark := tcell.StyleDefault.Background(darkSquare)
 	base := tcell.StyleDefault.Background(tcell.ColorNone).Foreground(tcell.ColorWhite)
 
 	coordsFiles := []rune{'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'}
-
 	ranks := strings.Split(fen, "/")
+
+	if color == chess.Black {
+		light, dark = dark, light
+
+		ranks = InvesionBoard(strings.Split(fen, "/"))
+		coordsFiles = []rune{'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A'}
+	}
+
 	if len(ranks) != 8 {
 		return
 	}
 
-	startX, startY := 4, 2
+	startX, startY := 4, 5
 
 	for y, rank := range ranks {
 		x := 1
 
 		num := strconv.Itoa(8 - y)
+		if color == chess.Black {
+			num = strconv.Itoa(y + 1)
+		}
 		screen.SetContent(startX-2, startY+y, rune(num[0]), nil, base)
 
 		for _, c := range rank {
@@ -72,8 +105,9 @@ func ReturnIcon(piece rune) rune {
 
 func drawSquare(baseX, baseY int, piece rune, file, rank int, light, dark tcell.Style) {
 	style := light.Foreground(tcell.ColorWhite)
+
 	if (file+rank)%2 == 1 {
-		style = dark
+		style = dark.Foreground(tcell.ColorWhite)
 	}
 
 	if unicode.IsLower(piece) {

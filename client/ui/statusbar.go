@@ -11,19 +11,20 @@ func StatusBar(data model.Data) {
 	stText := tcell.StyleDefault.Background(tcell.ColorNone).Foreground(tcell.ColorWhite)
 
 	msg := data.Message
+	statusMsg := data.Status
 
 	if data.FEN == "" {
-		str := fmt.Sprintf("Status : %s", msg)
+		str := fmt.Sprintf(" %s ", msg)
 		for x, char := range str {
-			screen.SetContent(2+x, 2, char, nil, stText)
+			screen.SetContent(2+x, 1, char, nil, stText)
 		}
 		screen.Show()
 		return
 	}
 
-	y := 14
+	y := 17
 
-	for x := 0; x < 40; x++ {
+	for x := 0; x < 60; x++ {
 		screen.SetContent(2+x, y-1, tcell.RuneHLine, nil, stText)
 	}
 
@@ -32,7 +33,7 @@ func StatusBar(data model.Data) {
 		screen.SetContent(2+x, y, char, nil, stText)
 	}
 
-	status := fmt.Sprintf("Status : %s", msg)
+	status := fmt.Sprintf("Status : %s", statusMsg)
 	for x, char := range status {
 		screen.SetContent(10+len(str)+x, y, char, nil, stText)
 	}

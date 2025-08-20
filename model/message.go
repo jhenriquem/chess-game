@@ -2,8 +2,9 @@ package model
 
 type Data struct {
 	FEN      string
-	Player   PlayerFormat
-	Oponnent PlayerFormat
+	White    PlayerFormat
+	Black    PlayerFormat
+	Status   string
 	Message  string
 	LastMove string
 }
