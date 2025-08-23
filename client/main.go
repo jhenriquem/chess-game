@@ -27,6 +27,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Falha ao conectar ao servidor: %s", err)
 	}
+
 	defer client.Conn.Close()
 
 	messageChan := make(chan model.Message)
@@ -60,6 +61,7 @@ func GameLoop(client *net.Client, s tcell.Screen, messageChan <-chan model.Messa
 			if lastMessage.Data.Black.Name == name {
 				color = chess.Black
 			}
+
 			ui.Header(lastMessage.Data)
 			ui.RenderBoard(lastMessage.Data.FEN, color)
 		}
@@ -73,19 +75,51 @@ func GameLoop(client *net.Client, s tcell.Screen, messageChan <-chan model.Messa
 
 	for {
 		select {
+		case message := <-messageChan:
+
+			lastMessage = message
+
+			if lastMessage.Type == "END" {
+
+				msg := lastMessage.Data.Message
+
+				s.Clear()
+
+				ui.Header(lastMessage.Data)
+				ui.RenderBoard(lastMessage.Data.FEN, color)
+				ui.StatusBar(lastMessage.Data)
+
+				ui.PrintMessage(msg)
+
+				for {
+					ev := s.PollEvent()
+					switch ev := ev.(type) {
+					case *tcell.EventKey:
+						if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyEnter {
+							close(done)
+							return
+						}
+					}
+				}
+			}
+
+			render()
+
 		case <-done:
 			return
 
-		case message := <-messageChan:
-			lastMessage = message
-			render()
-
 		case err := <-errChan:
-			log.Printf("Erro de conexão: %s", err)
-			select {
-			case <-done:
-			default:
-				close(done)
+			lastMessage = <-messageChan
+
+			if lastMessage.Type != "END" {
+				msg := fmt.Sprintf("Error connecting to server (%s)", err.Error())
+				ui.PrintMessage(msg)
+
+				select {
+				case <-done:
+				default:
+					close(done)
+				}
 			}
 
 		case ev := <-eventChan:

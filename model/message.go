@@ -10,6 +10,6 @@ type Data struct {
 }
 
 type Message struct {
-	Type string // CONNECTED , MOVE, RESING, START, TURN , TIMEOUT, WAIT
+	Type string // CONNECTED , MOVE, RESING, START, TURN , TIMEOUT, WAIT, END
 	Data Data
 }

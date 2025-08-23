@@ -3,13 +3,40 @@ package game
 import (
 	"chess-game/model"
 	"fmt"
-	"log"
-	"time"
 
 	"github.com/corentings/chess/v2"
 )
 
 var timeChan chan struct{}
+
+func UpdatePlayers(player, oponnent *model.Player, game *model.Game) {
+	GameFEN := game.Chess.Position().Board().String()
+
+	msg := model.Message{
+		Type: "TURN",
+		Data: model.Data{
+			White: model.PlayerFormat{
+				Color:    game.Players[0].Color,
+				Name:     game.Players[0].Name,
+				Timeleft: game.Players[0].Timeleft,
+			},
+			Black: model.PlayerFormat{
+				Color:    game.Players[1].Color,
+				Timeleft: game.Players[1].Timeleft,
+				Name:     game.Players[1].Name,
+			},
+			FEN:      GameFEN,
+			Status:   fmt.Sprintf("%s turn", ColorName(player.Color)),
+			LastMove: ReturnLastMove(game),
+		},
+	}
+
+	oponnentMsg := msg
+	oponnentMsg.Type = "WAIT"
+	oponnent.Encoder.Encode(oponnentMsg)
+
+	player.Encoder.Encode(msg)
+}
 
 func Run(game *model.Game) {
 	defer func() {
@@ -19,48 +46,31 @@ func Run(game *model.Game) {
 
 	turn := 0
 	for {
-		GameFEN := game.Chess.Position().Board().String()
-
 		currentPlayer := game.Players[turn]
 		oponnent := game.Players[1-turn]
 
-		msg := model.Message{
-			Type: "TURN",
-			Data: model.Data{
-				White: model.PlayerFormat{
-					Color:    game.Players[0].Color,
-					Name:     game.Players[0].Name,
-					Timeleft: game.Players[0].Timeleft,
-				},
-				Black: model.PlayerFormat{
-					Color:    game.Players[1].Color,
-					Timeleft: game.Players[1].Timeleft,
-					Name:     game.Players[1].Name,
-				},
-				FEN:      GameFEN,
-				Status:   fmt.Sprintf("%s turn", ColorName(currentPlayer.Color)),
-				LastMove: ReturnLastMove(game),
-			},
-		}
-
-		oponnentMsg := msg
-		oponnentMsg.Type = "WAIT"
-		oponnent.Encoder.Encode(oponnentMsg)
-
-		currentPlayer.Encoder.Encode(msg)
+		UpdatePlayers(currentPlayer, oponnent, game)
 
 		timeChan = make(chan struct{})
 		go StartClock(currentPlayer, timeChan)
 
 		moveChan := make(chan model.Message, 1)
+
+		done := make(chan struct{})
+
 		go func() {
-			ReadPlayerMessage(currentPlayer, oponnent, moveChan)
+			ok := ReadPlayerMessage(currentPlayer, moveChan)
+			if !ok {
+				EndGameByResign(currentPlayer, oponnent, game)
+				close(done)
+			}
 		}()
 
 		select {
+		case <-done:
+			return
 		case <-timeChan:
-			currentPlayer.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Your time is up"}})
-			oponnent.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Your opponent's time is up"}})
+			EndGameByTimeUp(currentPlayer, oponnent, game)
 			return
 
 		case playerMessage, ok := <-moveChan:
@@ -78,9 +88,7 @@ func Run(game *model.Game) {
 			}
 
 			if game.Chess.Outcome() != chess.NoOutcome {
-				result := game.Chess.Outcome().String()
-				currentPlayer.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Game Over: " + result}})
-				oponnent.Encoder.Encode(model.Message{Type: "INFO", Data: model.Data{Message: "Game Over: " + result}})
+				EndGame(currentPlayer, oponnent, game)
 				return
 			}
 
@@ -90,37 +98,4 @@ func Run(game *model.Game) {
 		}
 
 	}
-}
-
-func ReadPlayerMessage(player, oponnent *model.Player, moveChan chan model.Message) {
-	var playerMessage model.Message
-
-	player.Conn.SetReadDeadline(time.Now().Add(300 * time.Second))
-
-	if err := player.Decoder.Decode(&playerMessage); err != nil {
-		log.Printf("\nError reading player(%s) message (%s)", player.Color, err.Error())
-
-		oponnent.Encoder.Encode(model.Message{
-			Type: "INFO",
-			Data: model.Data{Message: "Your opponent is disconnected"},
-		})
-
-		close(moveChan)
-
-		return
-	}
-	moveChan <- playerMessage
-}
-
-func ValidMove(move string, c *chess.Game) (bool, error) {
-	for _, validMove := range c.Position().ValidMoves() {
-		if validMove.String() == move {
-			err := c.PushNotationMove(move, chess.UCINotation{}, nil)
-			if err != nil {
-				return false, err
-			}
-			return true, nil
-		}
-	}
-	return false, fmt.Errorf("Invalid Move")
 }

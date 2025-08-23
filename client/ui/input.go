@@ -14,5 +14,7 @@ func Input(text string) {
 		screen.SetContent(5+x, 19, char, nil, stText)
 	}
 
+	screen.ShowCursor(5+len(text), 19)
+
 	screen.Show()
 }
