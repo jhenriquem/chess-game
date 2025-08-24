@@ -6,17 +6,15 @@ import (
 	"log"
 	"net/http"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 var addr = flag.String("addr", "localhost:8080", "http service address")
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 	http.HandleFunc("/", handler.Game)
 
 	log.Println("Server listening on :8000")
