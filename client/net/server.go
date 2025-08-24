@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net"
+	"os"
 )
 
 type Client struct {
@@ -40,7 +41,7 @@ func (c *Client) ReadServer(message chan model.Message, errChan chan error) {
 }
 
 func ConnectedServer(name string) (*Client, error) {
-	conn, err := net.Dial("tcp", "localhost:8000")
+	conn, err := net.Dial("tcp", os.Getenv("SERVER_URL"))
 	if err != nil {
 		return nil, err
 	}
