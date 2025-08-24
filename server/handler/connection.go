@@ -19,7 +19,7 @@ var (
 func Game(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Printf("Erro ao conectar o client  : %s", err.Error())
+		log.Printf("Erro ao conectar o client : %s", err.Error())
 	}
 
 	go connection(conn)

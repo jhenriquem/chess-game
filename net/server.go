@@ -40,7 +40,7 @@ func (c *Client) ReadServer(message chan model.Message, errChan chan error) {
 }
 
 func ConnectedServer(name string) (*Client, error) {
-	u := url.URL{Scheme: "ws", Host: os.Getenv("SERVER_URL"), Path: "/"}
+	u := url.URL{Scheme: "wss", Host: os.Getenv("SERVER_URL"), Path: "/game"}
 
 	conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
