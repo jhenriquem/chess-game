@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func Match(p1, p2 *model.Player) {
+func match(p1, p2 *model.Player) {
 	log.Printf("New Game: %s (W) vs %s (B)\n", p1.Name, p2.Name)
 
 	// Notifying players that they have encountered a player
@@ -20,8 +20,8 @@ func Match(p1, p2 *model.Player) {
 		Data: data,
 	}
 
-	p1.Encoder.Encode(msg)
-	p2.Encoder.Encode(msg)
+	p1.Conn.WriteJSON(msg)
+	p2.Conn.WriteJSON(msg)
 
 	game.Start(p1, p2)
 }

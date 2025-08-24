@@ -2,6 +2,7 @@ package game
 
 import (
 	"chess-game/model"
+	"chess-game/net"
 	"fmt"
 
 	"github.com/corentings/chess/v2"
@@ -33,9 +34,9 @@ func UpdatePlayers(player, oponnent *model.Player, game *model.Game) {
 
 	oponnentMsg := msg
 	oponnentMsg.Type = "WAIT"
-	oponnent.Encoder.Encode(oponnentMsg)
+	oponnent.Conn.WriteJSON(oponnentMsg)
 
-	player.Encoder.Encode(msg)
+	player.Conn.WriteJSON(msg)
 }
 
 func Run(game *model.Game) {
@@ -59,7 +60,7 @@ func Run(game *model.Game) {
 		done := make(chan struct{})
 
 		go func() {
-			ok := ReadPlayerMessage(currentPlayer, moveChan)
+			ok := net.ReadPlayerMessage(currentPlayer, moveChan)
 			if !ok {
 				EndGameByResign(currentPlayer, oponnent, game)
 				close(done)
@@ -80,7 +81,7 @@ func Run(game *model.Game) {
 
 			moveStr := playerMessage.Data.Message
 			if IsValid, err := ValidMove(moveStr, &game.Chess); !IsValid {
-				currentPlayer.Encoder.Encode(model.Message{
+				currentPlayer.Conn.WriteJSON(model.Message{
 					Type: "INFO",
 					Data: model.Data{Message: fmt.Sprintf("Invalid Move (%s)", err.Error())},
 				})

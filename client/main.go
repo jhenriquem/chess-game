@@ -1,9 +1,9 @@
 package main
 
 import (
-	"chess-game/client/net"
 	"chess-game/client/ui"
 	"chess-game/model"
+	"chess-game/net"
 	"fmt"
 	"log"
 	"os"

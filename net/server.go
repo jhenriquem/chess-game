@@ -2,16 +2,15 @@ package net
 
 import (
 	"chess-game/model"
-	"encoding/json"
 	"log"
-	"net"
+	"net/url"
 	"os"
+
+	"github.com/gorilla/websocket"
 )
 
 type Client struct {
-	Conn net.Conn
-	Enc  *json.Encoder
-	Dec  *json.Decoder
+	Conn *websocket.Conn
 }
 
 func (c *Client) SendMove(move string) error {
@@ -22,7 +21,7 @@ func (c *Client) SendMove(move string) error {
 		},
 	}
 
-	if err := c.Enc.Encode(msg); err != nil {
+	if err := c.Conn.WriteJSON(msg); err != nil {
 		log.Println("Erro ao enviar mensagem:", err)
 		return err
 	}
@@ -32,7 +31,7 @@ func (c *Client) SendMove(move string) error {
 func (c *Client) ReadServer(message chan model.Message, errChan chan error) {
 	for {
 		var m model.Message
-		if err := c.Dec.Decode(&m); err != nil {
+		if err := c.Conn.ReadJSON(&m); err != nil {
 			errChan <- err
 			return
 		}
@@ -41,15 +40,15 @@ func (c *Client) ReadServer(message chan model.Message, errChan chan error) {
 }
 
 func ConnectedServer(name string) (*Client, error) {
-	conn, err := net.Dial("tcp", os.Getenv("SERVER_URL"))
+	u := url.URL{Scheme: "ws", Host: os.Getenv("SERVER_URL"), Path: "/"}
+
+	conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
 
 	client := &Client{
 		Conn: conn,
-		Enc:  json.NewEncoder(conn),
-		Dec:  json.NewDecoder(conn),
 	}
 
 	msg := model.Message{
@@ -59,7 +58,8 @@ func ConnectedServer(name string) (*Client, error) {
 			Message: name,
 		},
 	}
-	client.Enc.Encode(msg)
+
+	client.Conn.WriteJSON(msg)
 
 	return client, nil
 }

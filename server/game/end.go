@@ -10,7 +10,7 @@ import (
 func EndGameByResign(player, oponnent *model.Player, game *model.Game) {
 	game.Chess.Resign(player.Color)
 
-	oponnent.Encoder.Encode(model.Message{
+	oponnent.Conn.WriteJSON(model.Message{
 		Type: "END",
 		Data: model.Data{
 			FEN:      game.Chess.Position().Board().String(),
@@ -33,7 +33,7 @@ func EndGameByResign(player, oponnent *model.Player, game *model.Game) {
 
 func EndGameByTimeUp(player, oponnent *model.Player, game *model.Game) {
 	game.Chess.Resign(player.Color)
-	player.Encoder.Encode(model.Message{
+	player.Conn.WriteJSON(model.Message{
 		Type: "END",
 		Data: model.Data{
 			Message:  fmt.Sprintf("Game Over - Your time is up (%s)", game.Chess.Outcome()),
@@ -53,7 +53,7 @@ func EndGameByTimeUp(player, oponnent *model.Player, game *model.Game) {
 		},
 	})
 
-	oponnent.Encoder.Encode(model.Message{
+	oponnent.Conn.WriteJSON(model.Message{
 		Type: "END",
 		Data: model.Data{
 			FEN:      game.Chess.Position().Board().String(),
@@ -98,7 +98,7 @@ func EndGame(player, oponnent *model.Player, game *model.Game) {
 	msgCurrent = fmt.Sprintf("%s by %s - %s", msgCurrent, game.Chess.Method(), outcome.String())
 	msgOpponent = fmt.Sprintf("%s by %s - %s", msgOpponent, game.Chess.Method(), outcome.String())
 
-	player.Encoder.Encode(model.Message{
+	player.Conn.WriteJSON(model.Message{
 		Type: "END",
 		Data: model.Data{
 			Message:  msgCurrent,
@@ -118,7 +118,7 @@ func EndGame(player, oponnent *model.Player, game *model.Game) {
 		},
 	})
 
-	oponnent.Encoder.Encode(model.Message{
+	oponnent.Conn.WriteJSON(model.Message{
 		Type: "END",
 		Data: model.Data{
 			FEN:      game.Chess.Position().Board().String(),

@@ -9,17 +9,14 @@ import (
 )
 
 func Start(p1, p2 *model.Player) {
-	// Assign colors
 	p1.Color = chess.White
 	p2.Color = chess.Black
 
-	// Create new game
 	game := model.Game{
 		Chess:   *chess.NewGame(),
 		Players: []*model.Player{p1, p2},
 	}
 
-	// Send initial info
 	for _, p := range game.Players {
 		p.Timeleft = 15 * time.Minute
 		msg := model.Message{
@@ -40,7 +37,7 @@ func Start(p1, p2 *model.Player) {
 				LastMove: ReturnLastMove(&game),
 			},
 		}
-		p.Encoder.Encode(msg)
+		p.Conn.WriteJSON(msg)
 	}
 
 	Run(&game)

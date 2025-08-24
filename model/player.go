@@ -1,11 +1,10 @@
 package model
 
 import (
-	"encoding/json"
-	"net"
 	"time"
 
 	"github.com/corentings/chess/v2"
+	"github.com/gorilla/websocket"
 )
 
 type PlayerFormat struct {
@@ -15,10 +14,9 @@ type PlayerFormat struct {
 }
 
 type Player struct {
-	Conn     net.Conn
-	Encoder  *json.Encoder
-	Decoder  *json.Decoder
+	Conn     *websocket.Conn
 	Name     string
 	Color    chess.Color
 	Timeleft time.Duration
+	Send     chan Message
 }

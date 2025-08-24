@@ -2,25 +2,24 @@ package main
 
 import (
 	"chess-game/server/handler"
+	"flag"
 	"log"
-	"net"
-	"sync"
+	"net/http"
+	"os"
+
+	"github.com/joho/godotenv"
 )
 
+var addr = flag.String("addr", "localhost:8080", "http service address")
+
 func main() {
-	ln, err := net.Listen("tcp", ":8000")
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error loading .env file")
 	}
-	defer ln.Close()
+	http.HandleFunc("/", handler.Game)
+
 	log.Println("Server listening on :8000")
 
-	var wg sync.WaitGroup
-
-	// accept loop
-	wg.Add(1)
-
-	handler.Connection(ln)
-
-	wg.Wait()
+	log.Fatal(http.ListenAndServe(os.Getenv("PORT"), nil))
 }
