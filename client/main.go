@@ -12,14 +12,13 @@ import (
 
 	"github.com/corentings/chess/v2"
 	"github.com/gdamore/tcell/v2"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// err := godotenv.Load()
+	// if err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 
 	s := ui.InitScreen()
 	defer s.Fini()
