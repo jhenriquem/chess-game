@@ -21,7 +21,7 @@ func Start(p1, p2 *model.Player) {
 
 	// Send initial info
 	for _, p := range game.Players {
-		p.Timeleft = 1 * time.Minute
+		p.Timeleft = 15 * time.Minute
 		msg := model.Message{
 			Type: "START",
 			Data: model.Data{
