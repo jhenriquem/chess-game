@@ -11,8 +11,12 @@ import (
 )
 
 var (
-	mutex       sync.Mutex
-	upgrader    = websocket.Upgrader{}
+	mutex    sync.Mutex
+	upgrader = websocket.Upgrader{
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
 	waitingConn *model.Player
 )
 

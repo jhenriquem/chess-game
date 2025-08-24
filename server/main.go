@@ -15,7 +15,7 @@ func main() {
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }
-	http.HandleFunc("/", handler.Game)
+	http.HandleFunc("/game", handler.Game)
 
 	log.Println("Server listening on :8000")
 
