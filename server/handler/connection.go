@@ -99,7 +99,6 @@ func connection(conn *websocket.Conn) {
 
 	p1 := waitingConn
 
-	// Reset
 	waitingConn = nil
 	mutex.Unlock()
 

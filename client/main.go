@@ -12,14 +12,14 @@ import (
 
 	"github.com/corentings/chess/v2"
 	"github.com/gdamore/tcell/v2"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-	// err := godotenv.Load()
+	_ = godotenv.Load()
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }
-
 	s := ui.InitScreen()
 	defer s.Fini()
 
@@ -197,160 +197,6 @@ func GameLoop(client *net.Client, s tcell.Screen, messageChan <-chan model.Messa
 		}
 	}
 }
-
-//
-//
-// func UpdateTime(timeLeft time.Duration, done chan struct{}) (time.Duration, bool) {
-// 	ticker := time.NewTicker(1 * time.Second)
-// 	defer ticker.Stop()
-//
-// 	for {
-// 		select {
-// 		case <-ticker.C:
-// 			timeLeft -= 1 * time.Second
-//
-// 			if timeLeft <= 0 {
-// 				timeLeft = 0
-//
-// 				close(done)
-// 				return timeLeft, false
-// 			}
-// 			return timeLeft, true
-// 		case <-done:
-// 			return timeLeft, false
-// 		}
-// 	}
-// }
-//
-// func GameLoop(client *net.Client, s tcell.Screen, messageChan <-chan model.Message, eventChan <-chan tcell.Event, errChan <-chan error, done chan struct{}, name string) {
-// 	input := ""
-// 	var lastMessage model.Message
-//
-// 	color := chess.White
-//
-// 	var timeLeft time.Duration
-// 	StopTime := make(chan struct{})
-//
-// 	render := func() {
-// 		s.Clear()
-//
-// 		if lastMessage.Data.FEN != "" {
-//
-// 			if lastMessage.Data.Black.Name == name {
-// 				color = chess.Black
-// 			}
-//
-// 			ui.Header(lastMessage.Data)
-// 			ui.RenderBoard(lastMessage.Data.FEN, color)
-// 		}
-//
-// 		if lastMessage.Type == "TURN" {
-// 			ui.Input(input)
-// 		}
-// 		ui.StatusBar(lastMessage.Data)
-// 		s.Show()
-// 	}
-//
-// 	for {
-// 		select {
-// 		case message := <-messageChan:
-//
-// 			lastMessage = message
-//
-// 			switch color {
-// 			case chess.Black:
-// 				timeLeft = lastMessage.Data.Black.Timeleft
-// 			case chess.White:
-// 				timeLeft = lastMessage.Data.White.Timeleft
-// 			}
-//
-// 			if lastMessage.Type == "TURN" {
-// 				go func() {
-// 					ticker := time.NewTicker(1 * time.Second)
-// 					defer ticker.Stop()
-//
-// 					for {
-// 						select {
-// 						case <-ticker.C:
-// 							timeLeft -= 1 * time.Second
-//
-// 							if timeLeft <= 0 {
-// 								timeLeft = 0
-//
-// 								close(StopTime)
-// 								return
-// 							}
-// 						case <-StopTime:
-// 							return
-// 						}
-// 					}
-// 				}()
-// 			}
-//
-// 			if lastMessage.Type == "END" {
-//
-// 				msg := lastMessage.Data.Message
-//
-// 				s.Clear()
-//
-// 				ui.Header(lastMessage.Data)
-// 				ui.RenderBoard(lastMessage.Data.FEN, color)
-// 				ui.StatusBar(lastMessage.Data)
-//
-// 				ui.PrintMessage(msg)
-//
-// 				for {
-// 					ev := s.PollEvent()
-// 					switch ev := ev.(type) {
-// 					case *tcell.EventKey:
-// 						if ev.Key() == tcell.KeyEscape || ev.Key() == tcell.KeyEnter {
-// 							close(done)
-// 							return
-// 						}
-// 					}
-// 				}
-// 			}
-//
-// 			render()
-//
-// 		case <-done:
-// 			return
-//
-// 		case err := <-errChan:
-// 			lastMessage = <-messageChan
-//
-// 			if lastMessage.Type != "END" {
-// 				msg := fmt.Sprintf("Error connecting to server (%s)", err.Error())
-// 				ui.PrintMessage(msg)
-//
-// 				select {
-// 				case <-done:
-// 				default:
-// 					close(done)
-// 				}
-// 			}
-//
-// 		case ev := <-eventChan:
-// 			switch ev := ev.(type) {
-// 			case *tcell.EventResize:
-// 				s.Sync()
-// 				render()
-//
-// 			case *tcell.EventKey:
-// 				var exit bool
-// 				input, exit = KeyEvents(ev, input, client)
-// 				if exit {
-// 					select {
-// 					case <-done:
-// 					default:
-// 						close(done)
-// 					}
-// 				}
-// 				render()
-// 			}
-// 		}
-// 	}
-// }
 
 func KeyEvents(ev *tcell.EventKey, input string, client *net.Client) (string, bool) {
 	switch ev.Key() {

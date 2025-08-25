@@ -4,7 +4,6 @@ import (
 	"chess-game/model"
 	"log"
 	"net/url"
-	"os"
 
 	"github.com/gorilla/websocket"
 )
@@ -40,10 +39,12 @@ func (c *Client) ReadServer(message chan model.Message, errChan chan error) {
 }
 
 func ConnectedServer(name string) (*Client, error) {
-	u := url.URL{Scheme: "wss", Host: os.Getenv("SERVER_URL"), Path: "/game"}
+	serverURL := "chess-game-server-d6my.onrender.com"
+	u := url.URL{Scheme: "wss", Host: serverURL, Path: "/game"}
 
 	conn, _, err := websocket.DefaultDialer.Dial(u.String(), nil)
 	if err != nil {
+		log.Println(u.String())
 		return nil, err
 	}
 

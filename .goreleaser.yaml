@@ -8,9 +8,6 @@
 
 version: 2
 
-env:
-  - SERVER_URL={{ .Env.SERVER_URL }}
-  - ENV_WITH_DEFAULT={{ if index .Env "ENV_WITH_DEFAULT"  }}{{ .Env.ENV_WITH_DEFAULT }}{{ else }}default_value{{ end }}
 before:
   hooks:
     # You may remove this if you don't use go modules.
@@ -21,8 +18,6 @@ before:
 builds:
   - id: client
     main: ./client/main.go
-    ldflags:
-      - -X main.ServerURL={{ .Env.SERVER_URL }}
     env:
       - CGO_ENABLED=0
     goos:

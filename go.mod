@@ -6,6 +6,7 @@ require (
 	github.com/corentings/chess/v2 v2.2.0
 	github.com/gdamore/tcell/v2 v2.8.1
 	github.com/gorilla/websocket v1.5.3
+	github.com/joho/godotenv v1.5.1
 )
 
 require (

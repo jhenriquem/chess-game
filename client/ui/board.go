@@ -119,7 +119,6 @@ func drawSquare(baseX, baseY int, piece rune, file, rank int, light, dark tcell.
 		char = ReturnIcon(piece)
 	}
 
-	// cada casa ocupa 3 colunas
 	screen.SetContent(baseX-1, baseY, ' ', nil, style)
 	screen.SetContent(baseX, baseY, char, nil, style)
 	screen.SetContent(baseX+1, baseY, ' ', nil, style)

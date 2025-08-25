@@ -15,8 +15,6 @@ func StartClock(player *model.Player, timeChan chan struct{}) {
 			case <-ticker.C:
 				player.Timeleft -= 1 * time.Second
 
-				// fmt.Printf("\n Timer clock of player (%s) : %v", player.Color, player.Timeleft)
-
 				if player.Timeleft <= 0 {
 					player.Timeleft = 0
 
